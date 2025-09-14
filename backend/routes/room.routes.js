@@ -1,8 +1,10 @@
-import roomCreation from "../controllers/room.controllers.js";
-import generateRoomId from "../controllers/room.controllers.js";
-import joinRoom from "../controllers/room.controllers.js";
+import {roomCreation,generateRoomId,joinRoom} from "../controllers/room.controllers.js";
+import express from "express";
 
+const router = express.Router();
 
-app.get("/create",roomCreation);
-app.get("/generateRoomId",generateRoomId);
-app.get("/join",joinRoom);
+router.get("/create",roomCreation);
+router.get("/generateRoomId",generateRoomId);
+router.get("/join",joinRoom);
+
+export default router;
