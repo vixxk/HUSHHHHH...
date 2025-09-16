@@ -3,7 +3,7 @@ import { roomIdGenerator } from "../utils/roomIdGenerator.js";
 
 export const roomCreation = async (req,res)=>{
     try {
-        const {isPrivate,roomId,roomName,password=""} = req.body;
+        const {admin,isPrivate,roomId,roomName,password=""} = req.body;
         
         if(!roomId || !roomName){
             return res.status(400).json({message: "Room ID and Room Name are required!"});
@@ -27,6 +27,7 @@ export const roomCreation = async (req,res)=>{
 
         const newRoom = await prisma.room.create({
             data:{
+                admin,
                 roomCode: roomId,
                 roomName,
                 password: isPrivate ? password : null,

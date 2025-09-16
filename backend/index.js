@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import roomRoutes from "../backend/routes/room.routes.js";
 import http from "http";
 import { Server } from "socket.io";
+import { prisma } from "./prisma.js";
+import uploadRoutes from "../backend/routes/upload.routes.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -11,15 +13,21 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+  cors:{
+    origin:"*",
+    methods:["GET", "POST"]
+  }
+});
 
 app.use(express.json());
 app.use(cors());
 
 app.use("/api/room",roomRoutes);
+app.use("/api",uploadRoutes);
 
 app.get("/health", (req,res) => {
-  return res.status(200).json("Server is up and running!");
+  return res.status(200).json({status: "Server is up and running!"});
 });
 
 server.listen(PORT, () => {
@@ -28,8 +36,52 @@ server.listen(PORT, () => {
 
 
 io.on("connection", (socket)=>{
-  console.log("A user connected");
-  socket.on("disconnect", ()=>{
-    console.log("A user disconnected");app
+  console.log("A user connected: ", socket.id);
+  
+  socket.on("joinRoom", ({roomCode}) => {
+    socket.join(roomCode);
+    console.log(`A user joined ${roomCode}`);
   });
+
+  socket.on("sendMessage", async ({roomCode, sender, message})=>{
+    
+    if(!sender){
+      return socket.emit("error", {message: "Sender is required"});
+    };
+    
+    const room = await prisma.room.findUnique({
+        where:{roomCode : roomCode}
+    });
+
+    if(!room){
+      return socket.emit("error", {message: "Room not found!"});
+    };
+
+    // if(!encryptionKey){
+    //   return socket.emit("error", "Encryption Key is required!");
+    // };
+
+    const encryptedMessage = {
+      content:message,
+      sender,
+      roomCode
+    };
+
+    io.to(roomCode).emit("receiveMessage", encryptedMessage);
+  });
+
+
+
+socket.on('typing', ({ roomCode, sender }) => {
+  socket.to(roomCode).emit('userTyping', {sender} );
+});
+
+socket.on('stopTyping', ({ roomCode }) => {
+  socket.to(roomCode).emit('userStopTyping');
+});
+
+socket.on('disconnect', () => {
+  console.log('User disconnected:', socket.id);
+});
+
 });
