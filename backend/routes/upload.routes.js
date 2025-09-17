@@ -1,6 +1,6 @@
-import epxress from "express";
+import express from "express";
 
-const router = epxress.Router();
+const router = express.Router();
 
 router.post("/upload", upload.single("file"), (req,res) => {
     try {

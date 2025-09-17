@@ -40,7 +40,7 @@ export const roomCreation = async (req,res)=>{
                 roomName,
                 password: isPrivate ? hashedPassword : null,
                 isPrivate,
-                lastActivity: Date.now()
+                lastActivity: new Date()
             }
         });
 
@@ -96,14 +96,13 @@ export const joinRoom = async (req,res) =>{
         
         const roomPassword = room.password;
         
-        let unHashedPassword; 
         if(isPrivate){
-            unHashedPassword = await bcrypt.compare(password,roomPassword);
+            const isMatch = await bcrypt.compare(password,roomPassword);
+            
+            if(!isMatch){
+                return res.status(400).json({message: "Wrong password!"});
+            };
         }
-
-        if(unHashedPassword != roomPassword){
-            return res.status(400).json({message: "Wrong password!"});
-        };
 
         return res.status(200).json({room});
 

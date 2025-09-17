@@ -45,6 +45,7 @@ io.on("connection", (socket)=>{
   socket.on("joinRoom", ({roomCode}) => {
     socket.join(roomCode);
     updateLastActivity(roomCode);
+    socket.data.roomCode = roomCode;
     console.log(`A user joined ${roomCode}`);
   });
 
@@ -78,7 +79,7 @@ io.on("connection", (socket)=>{
     io.to(roomCode).emit("receiveMessage", encryptedMessage);
   });
 
-  
+
 socket.on('typing', ({ roomCode, sender }) => {
   socket.to(roomCode).emit('userTyping', {sender} );
 });
@@ -88,8 +89,11 @@ socket.on('stopTyping', ({ roomCode }) => {
 });
 
 socket.on('disconnect', () => {
+  if(socket.data.roomCode){
+    updateLastActivity(socket.data.roomCode);
+  };
+
   console.log('User disconnected:', socket.id);
-  updateLastActivity(roomCode);
 });
 
 });

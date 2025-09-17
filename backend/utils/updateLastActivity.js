@@ -4,10 +4,10 @@ export const updateLastActivity = async(req,res) =>{
     try {
         const{roomCode} = req.body;
         
-        const updateLastActivity = await prisma.room.findUnique({
+        const updateLastActivity = await prisma.room.update({
             where:{roomCode:roomCode},
             data:{
-                lastActivity: Date.now()
+                lastActivity: new Date()
             }
         });
     } catch (error) {

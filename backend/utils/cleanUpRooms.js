@@ -2,7 +2,7 @@ import { prisma } from "../prisma.js";
 
 export const cleanUpRooms = async(req,res)=>{
     try {
-        const EXPIRY = 1*60*1000;
+        const oneHourAgo = new Date(Date.now() - 60*60*1000);
 
         const inactiveRooms = await prisma.room.findMany({
             where:{

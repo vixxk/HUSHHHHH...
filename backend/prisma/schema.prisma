@@ -9,7 +9,7 @@ datasource db {
 
 model Room{
   id          Int    @id @default(autoincrement())
-  admin       Int    @unique
+  admin       Int    
   roomCode    Int    @unique
   roomName    String
   password    String?
