@@ -1,5 +1,7 @@
 import {prisma} from "../prisma.js";
 import { roomIdGenerator } from "../utils/roomIdGenerator.js";
+import bcrypt from "bcryptjs";
+import { updateLastActivity } from "../utils/updateLastActivity.js";
 
 export const roomCreation = async (req,res)=>{
     try {
@@ -25,13 +27,20 @@ export const roomCreation = async (req,res)=>{
             return res.status(400).json({message: "Room with this ID already exists"});
         }
 
+        let hashedPassword;
+        if(isPrivate){
+            const salt = await bcrypt.genSalt(10);
+            hashedPassword = await bcrypt.hash(password,salt);
+        };
+
         const newRoom = await prisma.room.create({
             data:{
                 admin,
                 roomCode: roomId,
                 roomName,
-                password: isPrivate ? password : null,
-                isPrivate
+                password: isPrivate ? hashedPassword : null,
+                isPrivate,
+                lastActivity: Date.now()
             }
         });
 
@@ -48,7 +57,7 @@ export const generateRoomId = async (req,res) =>{
         let generatedId = roomIdGenerator();
 
         const existingRoom = await prisma.room.findUnique({
-            where: {roomId : generatedId}
+            where: {roomCode : generatedId}
         });
         
         if(existingRoom){
@@ -76,22 +85,54 @@ export const joinRoom = async (req,res) =>{
         }
 
         const room = await prisma.room.findUnique({
-            where: {roomId:roomId}
+            where: {roomCode:roomId}
         });
+
+        updateLastActivity(roomId);
 
         if(!room){
             res.status(404).json({message: "Invalid Credentials! Room does not exist"});
         }
-
+        
         const roomPassword = room.password;
-        if(password != roomPassword){
+        
+        let unHashedPassword; 
+        if(isPrivate){
+            unHashedPassword = await bcrypt.compare(password,roomPassword);
+        }
+
+        if(unHashedPassword != roomPassword){
             return res.status(400).json({message: "Wrong password!"});
         };
 
         return res.status(200).json({room});
 
     } catch (error) {
-        console.log("Room Joim Error!");
+        console.log("Room Join Error!");
+        throw new Error(error);
+    }
+};
+
+export const deleteRoom = async (req,res) =>{
+    try {
+        const {roomCode,userId} = req.body;
+    
+        const room = await prisma.room.findUnique({
+            where: {roomCode:roomCode}
+        });
+
+        if(room.admin != userId){
+            return res.status(400).json({message: "Only the admin can delete room!"})
+        };
+
+        const deleteRoom = await prisma.room.delete({
+            where: {roomCode:roomCode}
+        });
+
+        return res.status(200).json({message: "Room deleted successfully"});
+        
+    } catch (error) {
+        console.log("Room deletion Error:",error);
         throw new Error(error);
     }
 };

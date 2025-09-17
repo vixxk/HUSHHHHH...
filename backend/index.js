@@ -6,6 +6,9 @@ import http from "http";
 import { Server } from "socket.io";
 import { prisma } from "./prisma.js";
 import uploadRoutes from "../backend/routes/upload.routes.js";
+import { updateLastActivity } from "./utils/updateLastActivity.js";
+import { cleanUpRooms } from "./utils/cleanUpRooms.js";
+
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -34,16 +37,18 @@ server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
+cleanUpRooms();
 
 io.on("connection", (socket)=>{
   console.log("A user connected: ", socket.id);
   
   socket.on("joinRoom", ({roomCode}) => {
     socket.join(roomCode);
+    updateLastActivity(roomCode);
     console.log(`A user joined ${roomCode}`);
   });
 
-  socket.on("sendMessage", async ({roomCode, sender, message})=>{
+  socket.on("sendMessage", async ({roomCode, sender, message, type})=>{
     
     if(!sender){
       return socket.emit("error", {message: "Sender is required"});
@@ -57,6 +62,8 @@ io.on("connection", (socket)=>{
       return socket.emit("error", {message: "Room not found!"});
     };
 
+    updateLastActivity(roomCode);
+    
     // if(!encryptionKey){
     //   return socket.emit("error", "Encryption Key is required!");
     // };
@@ -64,14 +71,14 @@ io.on("connection", (socket)=>{
     const encryptedMessage = {
       content:message,
       sender,
-      roomCode
+      roomCode,
+      type
     };
 
     io.to(roomCode).emit("receiveMessage", encryptedMessage);
   });
 
-
-
+  
 socket.on('typing', ({ roomCode, sender }) => {
   socket.to(roomCode).emit('userTyping', {sender} );
 });
@@ -82,6 +89,7 @@ socket.on('stopTyping', ({ roomCode }) => {
 
 socket.on('disconnect', () => {
   console.log('User disconnected:', socket.id);
+  updateLastActivity(roomCode);
 });
 
 });
