@@ -8,7 +8,7 @@ import { prisma } from "./prisma.js";
 import uploadRoutes from "../backend/routes/upload.routes.js";
 import { updateLastActivity } from "./utils/updateLastActivity.js";
 import { cleanUpRooms } from "./utils/cleanUpRooms.js";
-
+import { swaggerUi, swaggerSpec } from "./swagger.js";
 
 dotenv.config();
 const PORT = process.env.PORT || 5000;
@@ -28,6 +28,8 @@ app.use(cors());
 
 app.use("/api/room",roomRoutes);
 app.use("/api",uploadRoutes);
+
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.get("/health", (req,res) => {
   return res.status(200).json({status: "Server is up and running!"});
