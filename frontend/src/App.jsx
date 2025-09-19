@@ -17,7 +17,7 @@ function App() {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-900 via-black to-gray-800 text-gray-100 flex flex-col items-center justify-start overflow-x-hidden">
-      {/* Professional Header */}
+      {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -38,7 +38,7 @@ function App() {
         <div className="w-24 h-1 bg-gradient-to-r from-transparent via-gray-400 to-transparent mx-auto mt-4"></div>
       </motion.div>
 
-      {/* Enhanced Animated tagline */}
+      {/* Tagline */}
       <motion.div 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -80,7 +80,7 @@ function App() {
         <RoomCard />
       </motion.div>
 
-      {/* Show Demo Button just below RoomCard */}
+      {/* Show Demo Button */}
       <motion.button
         onClick={scrollToDemo}
         initial={{ opacity: 0, y: 10 }}
@@ -102,7 +102,7 @@ function App() {
         <DemoCards />
       </motion.div>
 
-      {/* Enhanced Scroll Section */}
+      {/* Scroll Section */}
       <div className="w-full mt-12 mb-0">
         <ContainerScroll
           titleComponent={
