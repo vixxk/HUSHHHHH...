@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /upload:
+ * /api/upload:
  *   post:
  *     summary: Upload a file to Cloudinary
  *     tags: [Upload]
@@ -15,6 +15,8 @@ const router = express.Router();
  *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - file
  *             properties:
  *               file:
  *                 type: string
@@ -36,6 +38,15 @@ const router = express.Router();
  *                   description: Cloudinary public ID of the file
  *       500:
  *         description: Upload failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 error:
+ *                   type: object
  */
 router.post("/upload", upload.single("file"), (req, res) => {
   try {
