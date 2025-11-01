@@ -47,7 +47,11 @@ const LandingPage = () => {
       )}
 
       {showJoinModal && (
-        <JoinRoomModal isOpen={showJoinModal} onClose={handleCloseJoin} />
+        <JoinRoomModal
+          isOpen={showJoinModal}
+          onClose={handleCloseJoin}
+          onOpenCreate={handleCreateClick}
+        />
       )}
     </div>
   );
