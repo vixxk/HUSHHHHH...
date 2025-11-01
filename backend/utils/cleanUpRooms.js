@@ -1,37 +1,37 @@
 import { prisma } from "../prisma.js";
 
-export const cleanUpRooms = async(req,res)=>{
-    try {
-        const oneHourAgo = new Date(Date.now() - 60*60*1000);
+export const cleanUpRooms = async () => {
+  try {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
-        const inactiveRooms = await prisma.room.findMany({
-            where:{
-                lastActivity:{
-                    lt: oneHourAgo
-                }
-            }
-        });
+    const inactiveRooms = await prisma.room.findMany({
+      where: {
+        lastActivity: {
+          lt: oneHourAgo,
+        },
+      },
+    });
 
-        if(inactiveRooms.length > 0){
-            console.log("Cleaning Up inactivity rooms!");
-        }
-
-        for (const inactiveRoom in inactiveRooms){
-            const cleanUp = await prisma.room.delete({
-                where:{
-                    roomCode: roomCode
-                }
-            });
-        }
-        
-
-    } catch (error) {
-        console.log("Room CleanUp Error: ", error);
-        throw new Error(error);
-        
+    if (inactiveRooms.length > 0) {
+      console.log("Cleaning up inactive rooms:", inactiveRooms.length);
     }
-}
 
-    setInterval(cleanUpRooms, 5 * 60 * 1000);
+    for (const room of inactiveRooms) {
+      await prisma.room.delete({
+        where: {
+          roomCode: room.roomCode, 
+        },
+      });
 
-    export default cleanUpRooms;
+      console.log(`Deleted room: ${room.roomCode}`);
+    }
+
+  } catch (error) {
+    console.log("Room CleanUp Error: ", error);
+    throw error;
+  }
+};
+
+setInterval(cleanUpRooms, 5 * 60 * 1000);
+
+export default cleanUpRooms;

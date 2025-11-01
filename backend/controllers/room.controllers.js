@@ -88,20 +88,21 @@ export const joinRoom = async (req,res) =>{
             where: {roomCode:roomId}
         });
 
-        updateLastActivity(roomId);
-
         if(!room){
             res.status(404).json({message: "Invalid Credentials! Room does not exist"});
         }
         
-        const roomPassword = room.password;
+        updateLastActivity(room.roomCode);
         
-        if(isPrivate){
-            const isMatch = await bcrypt.compare(password,roomPassword);
-            
-            if(!isMatch){
-                return res.status(400).json({message: "Wrong password!"});
-            };
+        if (room.isPrivate) {
+            if (!password) {
+              return res.status(400).json({ message: "Password is required for this private room!" });
+            }
+      
+            const isMatch = await bcrypt.compare(password, room.password);
+            if (!isMatch) {
+              return res.status(400).json({ message: "Wrong password!" });
+            }
         }
 
         return res.status(200).json({room});
