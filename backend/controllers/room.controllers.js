@@ -113,26 +113,50 @@ export const joinRoom = async (req,res) =>{
     }
 };
 
-export const deleteRoom = async (req,res) =>{
+export const deleteRoom = async (req, res) => {
     try {
-        const {roomCode,userId} = req.body;
-    
+
+        const { roomCode, userId } = req.body;
+
         const room = await prisma.room.findUnique({
-            where: {roomCode:roomCode}
+            where: { roomCode: roomCode }
         });
-
-        if(room.admin != userId){
-            return res.status(400).json({message: "Only the admin can delete room!"})
-        };
-
-        const deleteRoom = await prisma.room.delete({
-            where: {roomCode:roomCode}
+        
+        if (!room) {
+            console.log('Room not found:', roomCode);
+            return res.status(404).json({ message: "Room not found!" });
+        }
+                
+        if (room.admin != userId) {
+            console.log('User is not admin');
+            return res.status(400).json({ message: "Only the admin can delete room!" });
+        }
+        
+        const io = req.app.get('io');
+        
+        if (!io) {
+            console.log('IO instance not available!');
+            return res.status(500).json({ message: "Socket.IO not available" });
+        }
+        
+        const roomId = String(roomCode);
+                        
+        io.to(roomId).emit('roomDeleted', { 
+            roomCode,
+            message: 'This room has been deleted by the admin' 
         });
-
-        return res.status(200).json({message: "Room deleted successfully"});
+                
+        // Small delay to ensure the event is sent before deletion
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        await prisma.room.delete({
+            where: { roomCode: roomCode }
+        });
+                
+        return res.status(200).json({ message: "Room deleted successfully" });
         
     } catch (error) {
-        console.log("Room deletion Error:",error);
-        throw new Error(error);
+        console.log("❌ Room deletion Error:", error);
+        return res.status(500).json({ message: "Failed to delete room" });
     }
 };

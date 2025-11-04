@@ -2,7 +2,7 @@ import { prisma } from "../prisma.js";
 
 export const updateLastActivity = async (roomCode) => {
   try {
-    await prisma.room.update({
+    await prisma.room.updateMany({
       where: { roomCode },
       data: { lastActivity: new Date() },
     });

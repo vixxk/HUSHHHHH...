@@ -26,6 +26,8 @@ const io = new Server(server, {
 app.use(express.json());
 app.use(cors());
 
+app.set('io', io);
+
 app.use("/api/room",roomRoutes);
 app.use("/api",uploadRoutes);
 
@@ -45,10 +47,14 @@ io.on("connection", (socket)=>{
   console.log("A user connected: ", socket.id);
   
   socket.on("joinRoom", ({roomCode}) => {
-    socket.join(roomCode);
-    updateLastActivity(roomCode);
-    socket.data.roomCode = roomCode;
-    console.log(`A user joined ${roomCode}`);
+    const roomId = String(roomCode);
+    const roomCodeNumber = parseInt(roomCode);
+    
+    socket.join(roomId);
+    updateLastActivity(roomCodeNumber);
+    socket.data.roomCode = roomId;
+    socket.data.roomCodeNumber = roomCodeNumber;
+    console.log(`A user joined room ${roomId} (socket: ${socket.id})`);
   });
 
   socket.on("sendMessage", async ({roomCode, sender, message, type})=>{
@@ -58,19 +64,15 @@ io.on("connection", (socket)=>{
     };
     
     const room = await prisma.room.findUnique({
-        where:{roomCode : roomCode}
+        where:{roomCode : parseInt(roomCode)}
     });
 
     if(!room){
       return socket.emit("error", {message: "Room not found!"});
     };
 
-    updateLastActivity(roomCode);
+    updateLastActivity(parseInt(roomCode));
     
-    // if(!encryptionKey){
-    //   return socket.emit("error", "Encryption Key is required!");
-    // };
-
     const encryptedMessage = {
       content:message,
       sender,
@@ -78,24 +80,25 @@ io.on("connection", (socket)=>{
       type
     };
 
-    io.to(roomCode).emit("receiveMessage", encryptedMessage);
+    io.to(String(roomCode)).emit("receiveMessage", encryptedMessage);
   });
 
+  socket.on('typing', ({ roomCode, sender }) => {
+    socket.to(String(roomCode)).emit('userTyping', {sender} );
+  });
 
-socket.on('typing', ({ roomCode, sender }) => {
-  socket.to(roomCode).emit('userTyping', {sender} );
+  socket.on('stopTyping', ({ roomCode }) => {
+    socket.to(String(roomCode)).emit('userStopTyping');
+  });
+
+  socket.on('disconnect', async () => {
+    if(socket.data.roomCodeNumber){
+      await updateLastActivity(socket.data.roomCodeNumber);
+    };
+
+    console.log('User disconnected:', socket.id);
+  });
+
 });
 
-socket.on('stopTyping', ({ roomCode }) => {
-  socket.to(roomCode).emit('userStopTyping');
-});
-
-socket.on('disconnect', () => {
-  if(socket.data.roomCode){
-    updateLastActivity(socket.data.roomCode);
-  };
-
-  console.log('User disconnected:', socket.id);
-});
-
-});
+export { io };
