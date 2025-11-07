@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { saveUserData } from "../../utils/userStorage";
 
 const CreateRoomModal = ({ isOpen, onClose }) => {
   const navigate = useNavigate();
@@ -13,13 +14,13 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
     roomId: "",
     isPrivate: false,
     password: "",
-    admin: 1,
+    admin: Date.now(),
   });
 
-  // Generate Room ID on mount
   useEffect(() => {
     if (isOpen) {
       generateRoomId();
+      setFormData(prev => ({ ...prev, admin: Date.now() }));
     }
   }, [isOpen]);
 
@@ -100,17 +101,23 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Store room info in localStorage
+        const adminUser = {
+          id: formData.admin,
+          name: `User${Math.floor(Math.random() * 1000)}`
+        };
+
         localStorage.setItem(
           "currentRoom",
           JSON.stringify({
             roomCode: formData.roomId,
             roomName: formData.roomName,
             isAdmin: true,
+            admin: formData.admin, 
           })
         );
 
-        // Navigate to room
+        saveUserData(formData.roomId, adminUser);
+
         navigate(`/room/${formData.roomId}`);
         onClose();
       } else {
@@ -128,15 +135,12 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
-      {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       ></div>
 
-      {/* Modal */}
       <div className="relative bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[90vh] overflow-y-auto transform rotate-1 hover:rotate-0 transition-transform">
-        {/* Header */}
         <div className="bg-black text-white p-6 border-b-8 border-black sticky top-0 z-10">
           <div className="flex items-center justify-between">
             <h2 className="text-3xl font-black tracking-tighter flex items-center space-x-3">
@@ -152,9 +156,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
-          {/* Error Message */}
           {error && (
             <div className="bg-red-500 text-white border-4 border-black p-4 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <span className="text-xl mr-2">⚠️</span>
@@ -162,7 +164,6 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Room ID (Read-only) */}
           <div className="space-y-3">
             <label className="block text-xl font-black uppercase tracking-wider">
               Room ID
@@ -202,7 +203,6 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* Room Name */}
           <div className="space-y-3">
             <label
               htmlFor="roomName"
@@ -227,7 +227,6 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             </p>
           </div>
 
-          {/* Private Room Toggle */}
           <div className="space-y-4">
             <label className="flex items-center space-x-4 cursor-pointer group">
               <div className="relative">
@@ -252,7 +251,6 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             </label>
           </div>
 
-          {/* Password (Conditional) */}
           {formData.isPrivate && (
             <div className="space-y-3 bg-yellow-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <label
@@ -278,7 +276,6 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             </div>
           )}
 
-          {/* Submit Buttons */}
           <div className="flex space-x-4 pt-4">
             <button
               type="submit"
@@ -291,7 +288,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
                   <span>CREATING...</span>
                 </span>
               ) : (
-                "CREATE ROOM "
+                "CREATE ROOM"
               )}
             </button>
             <button
