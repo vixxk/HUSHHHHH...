@@ -24,7 +24,13 @@ const io = new Server(server, {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["https://hushhhhh.onrender.com"], 
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    credentials: true,
+  })
+);
 
 app.set('io', io);
 

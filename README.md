@@ -106,7 +106,6 @@ DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/hushhh"
 CLOUDINARY_CLOUD_NAME=your_cloud_name
 CLOUDINARY_API_KEY=your_key
 CLOUDINARY_API_SECRET=your_secret
-BACKEND_URL=http://localhost:5000
 NODE_ENV=development
 ```
 
