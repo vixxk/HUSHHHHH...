@@ -16,7 +16,7 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
 
       if (value.trim()) {
         onTyping();
-        
+
         if (typingTimeoutRef.current) {
           clearTimeout(typingTimeoutRef.current);
         }
@@ -32,13 +32,13 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+
     if (message.trim()) {
-      onSend(message.trim(), 'text');
-      setMessage('');
+      onSend(message.trim(), "text");
+      setMessage("");
       setCharCount(0);
       onStopTyping();
-      
+
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
@@ -46,12 +46,12 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
   };
 
   const handleFileUpload = (fileUrl) => {
-    onSend(fileUrl, 'file');
+    onSend(fileUrl, "file");
     setShowFileUpload(false);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSubmit(e);
     }
@@ -62,7 +62,11 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
       {/* Character Counter */}
       {charCount > 0 && (
         <div className="mb-3 flex justify-end">
-          <span className={`text-sm font-black ${charCount >= MAX_CHARS ? 'text-red-500' : 'text-gray-600'}`}>
+          <span
+            className={`text-sm font-black ${
+              charCount >= MAX_CHARS ? "text-red-500" : "text-gray-600"
+            }`}
+          >
             {charCount}/{MAX_CHARS}
           </span>
         </div>
@@ -74,23 +78,25 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
           type="button"
           onClick={() => setShowFileUpload(!showFileUpload)}
           className={`group px-5 py-4 text-3xl border-4 border-black transition-all shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1 ${
-            showFileUpload ? 'bg-yellow-300' : 'bg-white hover:bg-yellow-300'
+            showFileUpload ? "bg-yellow-300" : "bg-white hover:bg-yellow-300"
           }`}
         >
-          <span className="group-hover:rotate-45 transition-transform inline-block">📎</span>
+          <span className="group-hover:rotate-45 transition-transform inline-block">
+            📎
+          </span>
         </button>
-        
-        {/* Message Input */}
-        <input
-          type="text"
+
+        {/* Message Textarea */}
+        <textarea
           value={message}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
-          className="flex-1 px-8 py-4 text-xl font-bold border-4 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400 placeholder:font-bold"
+          className="flex-1 px-5 py-1 text-xl font-bold border-3 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all placeholder:text-gray-400 placeholder:font-bold resize-none"
           maxLength={MAX_CHARS}
+          rows={2}
         />
-        
+
         {/* Send Button */}
         <button
           type="submit"
@@ -99,7 +105,9 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
         >
           <span className="flex items-center space-x-2">
             <span>SEND</span>
-            <span className="text-2xl group-hover:translate-x-1 transition-transform">→</span>
+            <span className="text-2xl group-hover:translate-x-1 transition-transform">
+              →
+            </span>
           </span>
         </button>
       </form>

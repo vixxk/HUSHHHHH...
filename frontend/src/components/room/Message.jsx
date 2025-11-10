@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 
 const Message = ({ message, isOwnMessage }) => {
+  const [copied, setCopied] = useState(false);
+
   const formatTime = () => {
     const now = new Date();
     return now.toLocaleTimeString('en-US', { 
@@ -18,62 +20,128 @@ const Message = ({ message, isOwnMessage }) => {
   ];
 
   const getColorForSender = (sender) => {
-    const hash = sender.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const hash = sender
+      .split('')
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return messageColors[hash % messageColors.length];
   };
 
+  useEffect(() => {
+    let timer;
+    if (copied) {
+      timer = setTimeout(() => setCopied(false), 2000);
+    }
+    return () => clearTimeout(timer);
+  }, [copied]);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(message.content);
+      setCopied(true);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
+  const copyButtonBase = `group flex items-center justify-center p-2 border-2 rounded cursor-pointer select-none 
+    transition-colors duration-200
+    ${
+      copied
+        ? "bg-green-600 border-green-600 text-white"
+        : "bg-white border-black text-black hover:bg-black hover:text-white"
+    }
+  `;
+
+  const tooltip = (
+    <span className="absolute bottom-full mb-1 hidden group-hover:block bg-black text-white text-xs rounded px-1.5 py-0.5 select-none whitespace-nowrap">
+      Copy message
+    </span>
+  );
+
   if (isOwnMessage) {
     return (
-      <div className="flex items-end space-x-4 flex-row-reverse mb-6 animate-fadeIn">
-        {/* Avatar*/}
+      <div className="flex items-end space-x-4 flex-row-reverse mb-6 gap-2.5 animate-fadeIn relative">
+        {/* Avatar */}
         <div className="w-12 h-12 bg-black text-white flex items-center justify-center font-black text-lg border-4 border-black flex-shrink-0 hover:scale-110 transition-transform ml-4">
           {message.sender[0].toUpperCase()}
         </div>
-        
+
         {/* Message Content */}
         <div className="flex-1 max-w-md space-y-2 mr-4">
           <div className="flex items-center justify-end space-x-3 mb-2">
-            <span className="text-xs font-black text-gray-600 uppercase tracking-wider">{formatTime()}</span>
-            <span className="text-base font-black bg-black text-white px-3 py-1 border-2 border-black">YOU</span>
+            <span className="text-xs font-black text-gray-600 uppercase tracking-wider">
+              {formatTime()}
+            </span>
+            <span className="text-base font-black bg-black text-white px-3 py-1 border-2 border-black">
+              YOU
+            </span>
           </div>
-          <div className="bg-black text-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] break-words hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
-            {message.type === 'file' ? (
-              <a 
-                href={message.content} 
-                target="_blank" 
-                rel="noopener noreferrer" // avoid tabnabbing
+          <div className="bg-black text-white border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] break-words hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all whitespace-pre-line">
+            {message.type === "file" ? (
+              <a
+                href={message.content}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline decoration-4 decoration-yellow-300 hover:decoration-white font-bold text-lg flex items-center space-x-2"
               >
                 <span className="text-2xl">📎</span>
                 <span>View File</span>
               </a>
             ) : (
-              <p className="font-bold text-lg leading-relaxed">{message.content}</p>
+              <p className="font-bold text-lg leading-relaxed">
+                {message.content}
+              </p>
             )}
           </div>
+        </div>
+
+        {/* Copy Button on left */}
+        <div className="relative">
+          <button
+            onClick={handleCopy}
+            className={copyButtonBase}
+            type="button"
+            aria-label="Copy message"
+          >
+            {copied ? "✔️" : "📋"}
+            {tooltip}
+          </button>
+          {copied && (
+            <div className="absolute bottom-full mb-6 right-4 bg-black text-white px-3 py-1 rounded text-sm font-bold animate-fadeInUp">
+              Copied!
+            </div>
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex items-end space-x-4 mb-6 animate-fadeIn">
-      {/* Avatar*/}
+    <div className="flex items-end space-x-4 mb-6 animate-fadeIn relative">
+      {/* Avatar */}
       <div className="w-12 h-12 bg-black text-white flex items-center justify-center font-black text-lg border-4 border-black flex-shrink-0 hover:scale-110 transition-transform mr-4">
         {message.sender[0].toUpperCase()}
       </div>
-      
+
       {/* Message Content */}
       <div className="flex-1 max-w-md space-y-2 ml-4">
         <div className="flex items-center space-x-3 mb-2">
-          <span className="text-base font-black bg-yellow-300 text-black px-3 py-1 border-2 border-black">{message.sender}</span>
-          <span className="text-xs font-black text-gray-600 uppercase tracking-wider">{formatTime()}</span>
+          <span className="text-base font-black bg-yellow-300 text-black px-3 py-1 border-2 border-black">
+            {message.sender}
+          </span>
+          <span className="text-xs font-black text-gray-600 uppercase tracking-wider">
+            {formatTime()}
+          </span>
         </div>
-        <div className={`${getColorForSender(message.sender)} border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] break-words hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all`}>
-          {message.type === 'file' ? (
-            <a 
-              href={message.content} 
-              target="_blank" 
+        <div
+          className={`${getColorForSender(
+            message.sender
+          )} border-4 border-black p-5 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] break-words hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all whitespace-pre-line`}
+        >
+          {message.type === "file" ? (
+            <a
+              href={message.content}
+              target="_blank"
               rel="noopener noreferrer"
               className="underline decoration-4 decoration-black hover:decoration-white font-bold text-lg flex items-center space-x-2"
             >
@@ -81,9 +149,29 @@ const Message = ({ message, isOwnMessage }) => {
               <span>View File</span>
             </a>
           ) : (
-            <p className="font-bold text-lg leading-relaxed">{message.content}</p>
+            <p className="font-bold text-lg leading-relaxed">
+              {message.content}
+            </p>
           )}
         </div>
+      </div>
+
+      {/* Copy Button on right */}
+      <div className="relative">
+        <button
+          onClick={handleCopy}
+          className={copyButtonBase}
+          type="button"
+          aria-label="Copy message"
+        >
+          {copied ? "✔️" : "📋"}
+          {tooltip}
+        </button>
+        {copied && (
+          <div className="absolute bottom-full mb-6 right-0 bg-black text-white px-3 py-1 rounded text-sm font-bold animate-fadeInUp">
+            Copied!
+          </div>
+        )}
       </div>
     </div>
   );
