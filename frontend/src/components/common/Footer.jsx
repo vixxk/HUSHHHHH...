@@ -54,10 +54,12 @@ const Footer = () => {
               LEGAL
             </h4>
             <ul className="space-y-2 lg:space-y-3">
-              {["Privacy", "Terms", "Cookies"].map((link) => (
+              {["Privacy & Terms"].map((link) => (
                 <li key={link}>
                   <a
-                    href="#"
+                    href="https://www.notion.so/HUSHHHH-2a7a4992143b80968ea8e8412d9704e4?"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="font-bold text-sm lg:text-base hover:underline hover:decoration-4 decoration-yellow-300 transition-all"
                   >
                     {link}
