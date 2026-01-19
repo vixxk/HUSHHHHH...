@@ -63,7 +63,7 @@ const FeatureCards = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 lg:mb-16 space-y-4 lg:space-y-6">
-          <h2 className="text-4xl lg:text-6xl font-black tracking-tighter">
+          <h2 className="text-3xl lg:text-6xl font-black tracking-tighter">
             POWERFUL
             <span className="inline-block bg-black text-white px-3 lg:px-4 mx-2 -rotate-2">
               FEATURES
@@ -77,10 +77,10 @@ const FeatureCards = () => {
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {features.map((feature, index) => (
-            <div 
+            <div
               key={feature.id}
               className={`${feature.bgColor} border-4 border-black p-6 lg:p-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200 group`}
-              style={{ 
+              style={{
                 transform: `rotate(${index % 2 === 0 ? '1deg' : '-1deg'})`,
               }}
             >

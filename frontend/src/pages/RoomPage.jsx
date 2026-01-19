@@ -6,11 +6,11 @@ import ChatWindow from '../components/room/ChatWindow';
 import MessageInput from '../components/room/MessageInput';
 import TypingIndicator from '../components/room/TypingIndicator';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
-import { 
-  saveMessagesToStorage, 
-  getMessagesFromStorage, 
+import {
+  saveMessagesToStorage,
+  getMessagesFromStorage,
   clearMessagesFromStorage,
-  clearExpiredMessages 
+  clearExpiredMessages
 } from '../utils/messageStorage';
 import {
   saveUserData,
@@ -81,9 +81,9 @@ const RoomPage = () => {
         }
 
         socketRef.current = io(BACKEND_URL);
-        
+
         socketRef.current.emit('joinRoom', { roomCode: parseInt(roomCode) });
-        
+
         setUsers([{
           id: currentUser.id,
           name: currentUser.name,
@@ -179,7 +179,7 @@ const RoomPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roomCode: parseInt(roomCode), userId: currentUser.id })
       });
-      
+
       const data = await response.json();
 
       if (response.ok) {
@@ -200,8 +200,8 @@ const RoomPage = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="w-full h-screen bg-white flex flex-col overflow-hidden">
-      <RoomInfo 
+    <div className="w-full h-[100dvh] bg-white flex flex-col overflow-hidden">
+      <RoomInfo
         room={room}
         isAdmin={isAdminUser}
         currentUserId={currentUser.id}
@@ -234,7 +234,7 @@ const RoomPage = () => {
           title="ROOM DELETED"
           message="The admin has deleted this room. You will be redirected to the home page."
           onConfirm={handleKickedOut}
-          onCancel={() => {}}
+          onCancel={() => { }}
           confirmText="OK"
           showCancel={false}
         />

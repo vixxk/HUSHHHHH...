@@ -112,7 +112,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
             roomCode: formData.roomId,
             roomName: formData.roomName,
             isAdmin: true,
-            admin: formData.admin, 
+            admin: formData.admin,
           })
         );
 
@@ -143,8 +143,8 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
       <div className="relative bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[90vh] overflow-y-auto transform rotate-1 hover:rotate-0 transition-transform">
         <div className="bg-black text-white p-6 border-b-8 border-black sticky top-0 z-10">
           <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-black tracking-tighter flex items-center space-x-3">
-              <span className="text-4xl">➕</span>
+            <h2 className="text-xl lg:text-3xl font-black tracking-tighter flex items-center space-x-3">
+              <span className="text-2xl lg:text-4xl">➕</span>
               <span>CREATE ROOM</span>
             </h2>
             <button
@@ -156,7 +156,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 lg:p-8 space-y-4 lg:space-y-6">
           {error && (
             <div className="bg-red-500 text-white border-4 border-black p-4 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
               <span className="text-xl mr-2">⚠️</span>
@@ -177,7 +177,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
                   type="text"
                   value={formData.roomId}
                   readOnly
-                  className="w-full px-6 py-4 text-2xl font-black border-4 border-black bg-gray-100 text-gray-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className="w-full px-3 py-2 lg:px-6 lg:py-4 text-lg lg:text-2xl font-black border-4 border-black bg-gray-100 text-gray-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
                 />
                 {generatingId && (
                   <div className="absolute right-4 top-1/2 transform -translate-y-1/2">

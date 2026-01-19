@@ -77,14 +77,14 @@ const Footer = () => {
           </p>
 
           {/* GitHub Button */}
-          <a
+          {/* <a
             href="https://github.com/vixxk/HUSHHHHH..."
             target="_blank"
             rel="noopener noreferrer"
             className="px-3 lg:px-4 py-2 lg:py-3 bg-white text-black font-black text-xs lg:text-sm border-4 border-white hover:bg-black hover:text-white hover:border-white transition-all"
           >
             GITHUB
-          </a>
+          </a> */}
         </div>
       </div>
     </footer>

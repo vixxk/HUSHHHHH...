@@ -23,26 +23,26 @@ const ChatWindow = ({ messages, currentUser, roomCode }) => {
   }, [roomCode]);
 
   return (
-    <div className="flex-1 overflow-y-auto bg-white p-6 lg:p-8 space-y-6">
+    <div className="flex-1 overflow-y-auto overflow-x-hidden bg-white p-4 lg:p-8 space-y-4 lg:space-y-6">
       {messages.length === 0 ? (
         <div className="h-full flex items-center justify-center">
           <div className="text-center space-y-6 max-w-md">
             <div className="text-8xl opacity-50">
               💬
             </div>
-            
+
             <h3 className="text-3xl font-black tracking-tighter text-gray-800">
               NO MESSAGES YET
             </h3>
-            
+
             <p className="text-xl font-bold text-gray-600 leading-relaxed">
               Be the first to <span className="bg-yellow-300 px-2 py-1 border-2 border-black">START</span> the conversation!
             </p>
-            
+
             <div className="flex items-center justify-center space-x-2 pt-4 opacity-40">
               <div className="w-2 h-2 bg-black rounded-full animate-pulse"></div>
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse" style={{animationDelay: '0.2s'}}></div>
-              <div className="w-2 h-2 bg-black rounded-full animate-pulse" style={{animationDelay: '0.4s'}}></div>
+              <div className="w-2 h-2 bg-black rounded-full animate-pulse" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-black rounded-full animate-pulse" style={{ animationDelay: '0.4s' }}></div>
             </div>
           </div>
         </div>

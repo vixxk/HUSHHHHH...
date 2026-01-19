@@ -59,7 +59,7 @@ const HowItWorks = () => {
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12 lg:mb-20 space-y-4 lg:space-y-6">
-          <h2 className="text-4xl lg:text-6xl font-black tracking-tighter">
+          <h2 className="text-3xl lg:text-6xl font-black tracking-tighter">
             HOW IT
             <span className="inline-block bg-white text-black px-3 lg:px-4 mx-2 rotate-2">
               WORKS
@@ -73,7 +73,7 @@ const HowItWorks = () => {
         {/* Steps */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
           {steps.map((step) => (
-            <div 
+            <div
               key={step.id}
               className="relative group"
             >

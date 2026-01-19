@@ -2,7 +2,7 @@ import React from 'react';
 
 const HeroSection = ({ onCreateClick, onJoinClick }) => {
   return (
-    <section className="w-full bg-white relative py-20 lg:py-32 min-h-fit overflow-hidden">
+    <section className="w-full bg-white relative py-12 lg:py-32 min-h-fit overflow-hidden">
       {/* Background Patterns */}
       <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
         <div className="absolute top-10 left-10 w-32 h-32 border-8 border-black rotate-12"></div>
@@ -22,7 +22,7 @@ const HeroSection = ({ onCreateClick, onJoinClick }) => {
             </div>
 
             {/* Title */}
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight lg:leading-none tracking-tighter">
+            <h1 className="text-4xl lg:text-7xl font-black leading-tight lg:leading-none tracking-tighter">
               CHAT
               <br />
               <span className="inline-block bg-black text-white px-3 lg:px-4 py-1 lg:py-2 -rotate-2 my-2">
@@ -33,14 +33,14 @@ const HeroSection = ({ onCreateClick, onJoinClick }) => {
             </h1>
 
             {/* Description */}
-            <p className="text-lg lg:text-2xl font-medium leading-relaxed max-w-xl">
-              Create <span className="bg-yellow-300 px-2 py-1 font-black">SECURE</span> chat rooms instantly. 
+            <p className="text-base lg:text-2xl font-medium leading-relaxed max-w-xl">
+              Create <span className="bg-yellow-300 px-2 py-1 font-black">SECURE</span> chat rooms instantly.
               No sign-up. No BS. Just pure communication.
             </p>
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <button 
+              <button
                 onClick={onCreateClick}
                 className="group px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-xl font-black bg-black text-white border-4 border-black hover:bg-white hover:text-black transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1"
               >
@@ -49,8 +49,8 @@ const HeroSection = ({ onCreateClick, onJoinClick }) => {
                   <span className="text-lg lg:text-2xl group-hover:rotate-90 transition-transform">➜</span>
                 </span>
               </button>
-              
-              <button 
+
+              <button
                 onClick={onJoinClick}
                 className="px-6 lg:px-8 py-3 lg:py-4 text-base lg:text-xl font-black border-4 border-black hover:bg-black hover:text-white transition-all duration-200 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] hover:shadow-[10px_10px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1"
               >
@@ -132,8 +132,8 @@ const HeroSection = ({ onCreateClick, onJoinClick }) => {
                 <div className="flex items-center space-x-2 px-3">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-black rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                    <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                    <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                   <span className="font-bold text-xs lg:text-sm">Someone is typing...</span>
                 </div>

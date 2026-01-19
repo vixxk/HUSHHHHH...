@@ -6,7 +6,7 @@ const FileUpload = ({ onUpload, onClose }) => {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
-  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
   const MAX_FILE_SIZE = 10 * 1024 * 1024; 
 
   const validateFile = (file) => {
@@ -34,6 +34,7 @@ const FileUpload = ({ onUpload, onClose }) => {
   };
 
   const uploadFile = async (file) => {
+    console.log("Starting upload for file:", file.name); // Debug log
     if (!validateFile(file)) return;
 
     setUploading(true);
@@ -43,12 +44,14 @@ const FileUpload = ({ onUpload, onClose }) => {
     formData.append('file', file);
 
     try {
+      console.log("Sending request to:", `${BACKEND_URL}/api/upload`); // Debug log
       const response = await fetch(`${BACKEND_URL}/api/upload`, {
         method: 'POST',
         body: formData,
       });
 
       const data = await response.json();
+      console.log("Upload response:", data); // Debug log
 
       if (response.ok) {
         onUpload(data.url);
@@ -57,7 +60,7 @@ const FileUpload = ({ onUpload, onClose }) => {
       }
     } catch (err) {
       setError('Network error. Please try again.');
-      console.error(err);
+      console.error("Upload Error:", err);
     } finally {
       setUploading(false);
     }

@@ -104,8 +104,8 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
       <div className="relative bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full transform -rotate-1 hover:rotate-0 transition-transform">
         <div className="bg-black text-white p-6 border-b-8 border-black">
           <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-black tracking-tighter flex items-center space-x-3">
-              <span className="text-4xl">🔗</span>
+            <h2 className="text-xl lg:text-3xl font-black tracking-tighter flex items-center space-x-3">
+              <span className="text-2xl lg:text-4xl">🔗</span>
               <span>JOIN ROOM</span>
             </h2>
             <button
@@ -117,7 +117,7 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 lg:p-8 space-y-4 lg:space-y-6">
           {error && (
             <div className="bg-red-500 text-white border-4 border-black p-4 font-bold">
               ⚠️ {error}
@@ -139,7 +139,7 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
               onChange={handleChange}
               placeholder="1234"
               required
-              className="w-full px-6 py-4 text-2xl font-black text-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              className="w-full px-3 py-2 lg:px-6 lg:py-4 text-xl lg:text-2xl font-black text-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
             />
             <p className="text-sm font-bold text-gray-600">
               Enter the <b>4-digit</b> room code shared with you
