@@ -5,6 +5,7 @@ import RoomPage from './pages/RoomPage';
 import NotFound from './pages/NotFound';
 import { cleanupExpiredUsers } from './utils/userStorage';
 import { clearExpiredMessages } from './utils/messageStorage';
+import { ThemeProvider } from './context/ThemeContext';
 
 function App() {
   useEffect(() => {
@@ -22,13 +23,15 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/room/:roomCode" element={<RoomPage />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/room/:roomCode" element={<RoomPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
 

@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUserData } from "../../utils/userStorage";
 
+import { useTheme } from "../../context/ThemeContext";
+
 const CreateRoomModal = ({ isOpen, onClose }) => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [generatingId, setGeneratingId] = useState(false);
@@ -136,67 +139,90 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       ></div>
 
-      <div className="relative bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full max-h-[90vh] overflow-y-auto transform rotate-1 hover:rotate-0 transition-transform">
-        <div className="bg-black text-white p-6 border-b-8 border-black sticky top-0 z-10">
+      <div className={`relative w-[95%] md:w-full max-w-lg max-h-[90vh] overflow-y-auto transform transition-all duration-200 scale-100 ${theme === 'dark'
+        ? 'bg-[#18181B] border border-[#27272A] text-white rounded-3xl shadow-2xl'
+        : 'bg-white border-2 md:border-4 border-black text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] md:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] rounded-none'
+        }`}>
+        {/* Header */}
+        <div className={`p-4 md:p-6 border-b ${theme === 'dark' ? 'border-[#27272A]' : 'bg-black text-white border-black border-b-2 md:border-b-4'}`}>
           <div className="flex items-center justify-between">
-            <h2 className="text-xl lg:text-3xl font-black tracking-tighter flex items-center space-x-3">
-              <span className="text-2xl lg:text-4xl">➕</span>
-              <span>CREATE ROOM</span>
+            <h2 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-3">
+              <span className="text-xl md:text-2xl">✨</span>
+              <span>Create Room</span>
             </h2>
             <button
               onClick={onClose}
-              className="w-12 h-12 bg-white text-black font-black text-2xl border-4 border-white hover:bg-black hover:text-white hover:border-white transition-all transform hover:rotate-90"
+              className={`w-8 h-8 flex items-center justify-center transition-colors ${theme === 'dark'
+                ? 'bg-[#27272A] text-gray-400 hover:text-white hover:bg-[#3F3F46] rounded-full'
+                : 'bg-white text-black font-black border-2 border-white hover:bg-black hover:text-white hover:border-white rounded-none'
+                }`}
             >
               ✕
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 lg:p-8 space-y-4 lg:space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 md:p-6 space-y-4 md:space-y-6">
           {error && (
-            <div className="bg-red-500 text-white border-4 border-black p-4 font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <span className="text-xl mr-2">⚠️</span>
+            <div className={`p-4 text-sm font-medium flex items-center gap-2 ${theme === 'dark'
+              ? 'bg-red-500/10 text-red-400 rounded-xl'
+              : 'bg-red-500 text-white border-4 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              }`}>
+              <span>⚠️</span>
               {error}
             </div>
           )}
 
           <div className="space-y-3">
-            <label className="block text-xl font-black uppercase tracking-wider">
+            <label className={`block text-sm font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
               Room ID
-              <span className="ml-2 text-sm bg-yellow-300 text-black px-2 py-1 border-2 border-black">
+              <span className={`ml-2 text-[10px] px-2 py-0.5 ${theme === 'dark' ? 'bg-[#27272A] text-[#EAB308] rounded-full' : 'bg-yellow-300 text-black border-2 border-black font-bold'
+                }`}>
                 AUTO-GENERATED
               </span>
             </label>
-            <div className="flex space-x-3">
+            <div className="flex gap-2">
               <div className="flex-1 relative">
                 <input
                   type="text"
                   value={formData.roomId}
                   readOnly
-                  className="w-full px-3 py-2 lg:px-6 lg:py-4 text-lg lg:text-2xl font-black border-4 border-black bg-gray-100 text-gray-700 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+                  className={`w-full px-3 py-2 md:px-4 md:py-3 text-base md:text-lg font-mono font-bold outline-none transition-all ${theme === 'dark'
+                    ? 'bg-[#09090B] border border-[#27272A] text-gray-300 rounded-xl'
+                    : 'bg-gray-100 border-2 border-black text-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] md:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                    }`}
                 />
                 {generatingId && (
-                  <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-                    <div className="w-6 h-6 border-4 border-black border-t-transparent rounded-full animate-spin"></div>
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <div className={`w-5 h-5 border-2 border-t-transparent rounded-full animate-spin ${theme === 'dark' ? 'border-[#EAB308]' : 'border-black'
+                      }`}></div>
                   </div>
                 )}
               </div>
               <button
                 type="button"
                 onClick={copyRoomId}
-                className="px-6 py-4 bg-yellow-300 border-4 border-black font-black hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1"
+                className={`px-3 py-2 md:px-4 md:py-2 text-sm md:text-base font-bold transition-all flex items-center gap-2 ${theme === 'dark'
+                  ? 'bg-[#27272A] text-white hover:bg-[#3F3F46] rounded-xl'
+                  : 'bg-yellow-300 border-2 border-black text-black hover:bg-black hover:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                  }`}
+                title="Copy ID"
               >
-                {copied ? "✓ COPIED!" : "📋 COPY"}
+                {copied ? "✓" : "📋"}
               </button>
               <button
                 type="button"
                 onClick={generateRoomId}
                 disabled={generatingId}
-                className="px-6 py-4 bg-white border-4 border-black font-black hover:bg-black hover:text-white transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1 disabled:opacity-50"
+                className={`px-3 py-2 md:px-4 md:py-2 text-sm md:text-base font-bold transition-all ${theme === 'dark'
+                  ? 'bg-[#27272A] text-white hover:bg-[#3F3F46] rounded-xl'
+                  : 'bg-white border-2 border-black text-black hover:bg-black hover:text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                  }`}
+                title="Generate New ID"
               >
                 🔄
               </button>
@@ -204,12 +230,8 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="space-y-3">
-            <label
-              htmlFor="roomName"
-              className="block text-xl font-black uppercase tracking-wider"
-            >
-              Room Name
-              <span className="text-red-500 ml-1">*</span>
+            <label htmlFor="roomName" className={`block text-sm font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+              Room Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -220,15 +242,21 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
               placeholder="My Awesome Chat Room"
               maxLength={50}
               required
-              className="w-full px-6 py-4 text-lg font-bold border-4 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+              className={`w-full px-3 py-2 md:px-4 md:py-3 text-sm md:text-base outline-none transition-all ${theme === 'dark'
+                ? 'bg-[#09090B] border-2 border-[#27272A] focus:border-[#EAB308] text-white placeholder-gray-600 rounded-xl'
+                : 'bg-white border-2 border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black placeholder-gray-400 font-bold'
+                }`}
             />
-            <p className="text-sm font-bold text-gray-600">
-              {formData.roomName.length}/50 characters
+            <p className={`text-xs font-medium text-right ${theme === 'dark' ? 'text-gray-600' : 'text-gray-400'}`}>
+              {formData.roomName.length}/50
             </p>
           </div>
 
           <div className="space-y-4">
-            <label className="flex items-center space-x-4 cursor-pointer group">
+            <label className={`flex items-center gap-4 cursor-pointer p-4 border transition-all ${theme === 'dark'
+              ? 'border-[#27272A] hover:bg-[#27272A]/50 rounded-2xl'
+              : 'border-2 border-black hover:bg-gray-50'
+              }`}>
               <div className="relative">
                 <input
                   type="checkbox"
@@ -237,28 +265,27 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
                   onChange={handleChange}
                   className="sr-only peer"
                 />
-                <div className="w-16 h-8 bg-gray-300 border-4 border-black peer-checked:bg-green-400 transition-all"></div>
-                <div className="absolute left-1 top-1 w-6 h-6 bg-black border-2 border-black transition-all peer-checked:translate-x-8"></div>
+                <div className={`w-12 h-7 transition-colors ${theme === 'dark' ? 'bg-[#3F3F46] peer-checked:bg-[#EAB308] rounded-full' : 'bg-gray-300 border-2 border-black peer-checked:bg-green-400 rounded-full'
+                  }`}></div>
+                <div className={`absolute left-1 top-1 w-5 h-5 transition-transform peer-checked:translate-x-5 ${theme === 'dark' ? 'bg-white rounded-full' : 'bg-black border border-black rounded-full'
+                  }`}></div>
               </div>
               <div>
-                <span className="text-xl font-black uppercase tracking-wider">
-                  Private Room 🔒
+                <span className={`block text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                  Private Room
                 </span>
-                <p className="text-sm font-bold text-gray-600">
-                  Require password to join
-                </p>
+                <span className={`text-xs ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+                  Require a password to join
+                </span>
               </div>
             </label>
           </div>
 
           {formData.isPrivate && (
-            <div className="space-y-3 bg-yellow-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <label
-                htmlFor="password"
-                className="block text-xl font-black uppercase tracking-wider"
-              >
-                Password
-                <span className="text-red-500 ml-1">*</span>
+            <div className={`space-y-3 p-4 animate-fadeIn ${theme === 'dark' ? 'bg-[#27272A]/50 rounded-xl' : 'bg-yellow-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-none'
+              }`}>
+              <label htmlFor="password" className={`block text-sm font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
+                Password <span className="text-red-500">*</span>
               </label>
               <input
                 type="password"
@@ -268,36 +295,42 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
                 onChange={handleChange}
                 placeholder="Enter a secure password"
                 minLength={4}
-                className="w-full px-6 py-4 text-lg font-bold border-4 border-black focus:outline-none focus:ring-0 focus:border-black focus:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                className={`w-full px-4 py-3 outline-none transition-all ${theme === 'dark'
+                  ? 'bg-[#09090B] border-2 border-[#27272A] focus:border-[#EAB308] text-white placeholder-gray-600 rounded-xl'
+                  : 'bg-white border-2 border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black placeholder-gray-400 font-bold'
+                  }`}
               />
-              <p className="text-sm font-bold text-black">
-                ⚠️ Minimum 4 characters. Share this with invited members only!
-              </p>
             </div>
           )}
 
-          <div className="flex space-x-4 pt-4">
-            <button
-              type="submit"
-              disabled={loading || generatingId}
-              className="flex-1 px-8 py-5 text-xl font-black bg-black text-white border-4 border-black hover:bg-white hover:text-black transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center space-x-3">
-                  <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>CREATING...</span>
-                </span>
-              ) : (
-                "CREATE ROOM"
-              )}
-            </button>
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-8 py-5 text-xl font-black border-4 border-black hover:bg-black hover:text-white transition-all shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transform hover:-translate-x-1 hover:-translate-y-1 disabled:opacity-50"
+              className={`flex-1 px-4 py-3 md:px-6 md:py-4 text-sm md:text-base font-bold transition-all ${theme === 'dark'
+                ? 'bg-[#27272A] text-white hover:bg-[#3F3F46] rounded-full'
+                : 'bg-white border-2 border-black text-black hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                }`}
             >
-              CANCEL
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading || generatingId}
+              className={`flex-[2] px-4 py-3 md:px-6 md:py-4 text-sm md:text-base font-bold transition-all items-center justify-center gap-2 ${theme === 'dark'
+                ? 'bg-[#EAB308] text-black hover:bg-[#D97706] shadow-yellow-900/20 rounded-full shadow-lg transform active:scale-95'
+                : 'bg-black text-white border-2 border-black hover:bg-white hover:text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                }`}
+            >
+              {loading ? (
+                <>
+                  <div className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin ${theme === 'dark' ? 'border-black' : 'border-white'}`}></div>
+                  <span>Creating...</span>
+                </>
+              ) : (
+                "Create Room"
+              )}
             </button>
           </div>
         </form>

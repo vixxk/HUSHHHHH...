@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 const steps = [
   {
@@ -31,42 +32,43 @@ const steps = [
     title: 'START CHATTING',
     description: 'Enjoy real-time messaging and file sharing instantly!',
     icon: '💬',
-    color: 'bg-green-300'
+    color: 'bg-green-400'
   }
 ];
 
+// Floating Background Shapes
+const floatingShapes = [
+  { className: "top-20 left-10 w-24 h-24 rotate-12 bg-[#27272A]/30" },
+  { className: "bottom-20 right-10 w-32 h-32 -rotate-6 bg-[#27272A]/20" },
+  { className: "top-1/2 right-20 w-16 h-16 rotate-45 bg-[#27272A]/40" },
+  { className: "bottom-40 left-20 w-20 h-20 -rotate-12 bg-[#27272A]/25" },
+];
+
 const HowItWorks = () => {
+  const { theme } = useTheme();
   return (
-    <section className="w-full py-16 lg:py-32 bg-black text-white relative overflow-hidden">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-        {[...Array(20)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute bg-white"
-            style={{
-              width: Math.random() * 100 + 50 + 'px',
-              height: Math.random() * 100 + 50 + 'px',
-              top: Math.random() * 100 + '%',
-              left: Math.random() * 100 + '%',
-              transform: `rotate(${Math.random() * 360}deg)`,
-              pointerEvents: 'none'
-            }}
-          ></div>
-        ))}
-      </div>
+    <section className={`w-full py-16 lg:py-32 relative overflow-hidden transition-colors duration-300 ${theme === 'dark' ? 'bg-[#09090B] text-[#F4F4F5]' : 'bg-black text-white'
+      }`}>
+      {/* Background Shapes (Light Mode only for reference effect) */}
+      {theme !== 'dark' && (
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {floatingShapes.map((shape, i) => (
+            <div key={i} className={`absolute ${shape.className} backdrop-blur-sm rounded-lg`}></div>
+          ))}
+        </div>
+      )}
+
+      {/* Texture for Dark Mode */}
+      <div className={`absolute inset-0 pointer-events-none opacity-20 overflow-hidden ${theme === 'dark' ? 'bg-[radial-gradient(#27272A_1px,transparent_1px)]' : ''}`} style={{ backgroundSize: '40px 40px' }}></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-12 lg:mb-20 space-y-4 lg:space-y-6">
-          <h2 className="text-3xl lg:text-6xl font-black tracking-tighter">
-            HOW IT
-            <span className="inline-block bg-white text-black px-3 lg:px-4 mx-2 rotate-2">
-              WORKS
-            </span>
+        <div className="text-center mb-16 lg:mb-24 space-y-6 lg:space-y-8 relative z-10">
+          <h2 className="text-4xl lg:text-7xl font-black tracking-tight uppercase">
+            HOW IT <span className={`${theme === 'dark' ? 'text-[#EAB308]' : 'bg-white text-black px-4 py-2 rotate-2 inline-block transform'}`}>WORKS</span>
           </h2>
-          <p className="text-lg lg:text-2xl font-medium">
-            Get started in <span className="bg-yellow-300 text-black px-2 py-1 font-black">4 SIMPLE STEPS</span>
+          <p className="text-xl lg:text-2xl font-bold text-gray-400">
+            Get started in <span className={`${theme === 'dark' ? 'text-white' : 'bg-yellow-400 text-black px-2'}`}>4 SIMPLE STEPS</span>
           </p>
         </div>
 
@@ -75,27 +77,34 @@ const HowItWorks = () => {
           {steps.map((step) => (
             <div
               key={step.id}
-              className="relative group"
+              className="relative group h-full"
             >
-              {/* Step Number */}
-              <div className="absolute -top-4 -left-4 w-16 h-16 lg:w-20 lg:h-20 bg-white text-black border-4 border-white flex items-center justify-center font-black text-lg lg:text-2xl transform -rotate-12 group-hover:rotate-0 transition-transform duration-200 z-20">
-                {step.number}
-              </div>
+              <div className={`relative p-6 lg:p-8 h-full flex flex-col transition-all duration-200 ${theme === 'dark'
+                  ? 'bg-[#18181B] text-[#F4F4F5] border border-[#27272A] hover:border-[#EAB308] hover:shadow-xl rounded-2xl'
+                  : `${step.color} border-4 border-white text-black shadow-[8px_8px_0px_0px_rgba(255,255,255,0.2)] hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_rgba(255,255,255,0.2)] ${step.id % 2 === 0 ? 'rotate-1' : '-rotate-1'}`
+                }`}>
 
-              {/* Card */}
-              <div className={`${step.color} border-4 border-white p-6 lg:p-8 pt-10 lg:pt-12 min-h-[200px] lg:min-h-[280px] shadow-[6px_6px_0px_0px_rgba(255,255,255,1)] hover:shadow-[10px_10px_0px_0px_rgba(255,255,255,1)] transform hover:-translate-x-1 hover:-translate-y-1 transition-all duration-200`}>
-                {/* Icon */}
-                <div className="text-4xl lg:text-5xl mb-3 lg:mb-4 group-hover:scale-110 transition-transform duration-200">
-                  {step.icon}
+                {/* Number Badge (Light Mode) */}
+                {theme !== 'dark' && (
+                  <div className="absolute -top-6 -left-4 bg-white text-black font-black text-xl w-12 h-12 flex items-center justify-center border-4 border-gray-100 shadow-md -rotate-12 z-10 transform group-hover:rotate-0 transition-transform">
+                    {step.number}
+                  </div>
+                )}
+
+                <div className="mb-6 flex justify-between items-start">
+                  {theme === 'dark' && (
+                    <span className="text-4xl font-bold opacity-10 text-white">{step.number}</span>
+                  )}
+                  <div className={`text-5xl lg:text-6xl ${theme === 'dark' ? 'text-[#EAB308]' : 'text-black drop-shadow-sm'}`}>
+                    {step.icon}
+                  </div>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-lg lg:text-xl font-black text-black mb-2 lg:mb-3 leading-tight">
+                <h3 className={`text-xl lg:text-2xl font-black mb-3 uppercase tracking-tight ${theme === 'dark' ? 'text-[#EAB308]' : 'text-black'}`}>
                   {step.title}
                 </h3>
 
-                {/* Description */}
-                <p className="text-black font-bold text-sm lg:text-base leading-relaxed">
+                <p className={`text-base lg:text-lg font-bold leading-relaxed ${theme === 'dark' ? 'text-gray-400' : 'text-black/80'}`}>
                   {step.description}
                 </p>
               </div>

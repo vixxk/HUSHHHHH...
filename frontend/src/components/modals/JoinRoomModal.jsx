@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { useTheme } from "../../context/ThemeContext";
+
 const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
+  const { theme } = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -97,37 +100,48 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fadeIn">
       <div
-        className="absolute inset-0 bg-black bg-opacity-50"
+        className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       ></div>
 
-      <div className="relative bg-white border-8 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] max-w-2xl w-full transform -rotate-1 hover:rotate-0 transition-transform">
-        <div className="bg-black text-white p-6 border-b-8 border-black">
+      <div className={`relative w-full max-w-md transform transition-all duration-200 scale-100 overflow-hidden ${theme === 'dark'
+        ? 'bg-[#18181B] border border-[#27272A] text-white rounded-3xl shadow-2xl'
+        : 'bg-white border-4 border-black text-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]'
+        }`}>
+        {/* Header */}
+        <div className={`p-6 border-b ${theme === 'dark' ? 'border-[#27272A]' : 'bg-black text-white border-black border-b-4'}`}>
           <div className="flex items-center justify-between">
-            <h2 className="text-xl lg:text-3xl font-black tracking-tighter flex items-center space-x-3">
-              <span className="text-2xl lg:text-4xl">🔗</span>
-              <span>JOIN ROOM</span>
+            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+              <span className="text-2xl">🔗</span>
+              <span>Join Room</span>
             </h2>
             <button
               onClick={onClose}
-              className="w-12 h-12 bg-white text-black font-black text-2xl border-4 border-white hover:bg-black hover:text-white hover:border-white transition-all transform hover:rotate-90"
+              className={`w-8 h-8 flex items-center justify-center transition-colors ${theme === 'dark'
+                ? 'bg-[#27272A] text-gray-400 hover:text-white hover:bg-[#3F3F46] rounded-full'
+                : 'bg-white text-black font-black border-2 border-white hover:bg-black hover:text-white hover:border-white'
+                }`}
             >
               ✕
             </button>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 lg:p-8 space-y-4 lg:space-y-6">
+        <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="bg-red-500 text-white border-4 border-black p-4 font-bold">
-              ⚠️ {error}
+            <div className={`p-4 text-sm font-medium flex items-center gap-2 ${theme === 'dark'
+              ? 'bg-red-500/10 text-red-400 rounded-xl'
+              : 'bg-red-500 text-white border-4 border-black font-bold shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              }`}>
+              <span>⚠️</span>
+              {error}
             </div>
           )}
 
           <div className="space-y-3">
             <label
               htmlFor="roomId"
-              className="block text-xl font-black uppercase"
+              className={`block text-sm font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}
             >
               Room ID <span className="text-red-500">*</span>
             </label>
@@ -139,31 +153,47 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
               onChange={handleChange}
               placeholder="1234"
               required
-              className="w-full px-3 py-2 lg:px-6 lg:py-4 text-xl lg:text-2xl font-black text-center border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]"
+              className={`w-full px-4 py-4 text-2xl font-black text-center tracking-widest outline-none transition-all ${theme === 'dark'
+                ? 'bg-[#09090B] border-2 border-[#27272A] focus:border-[#EAB308] text-white placeholder-gray-700 rounded-xl'
+                : 'bg-white border-4 border-black text-black placeholder-gray-300 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+                }`}
             />
-            <p className="text-sm font-bold text-gray-600">
-              Enter the <b>4-digit</b> room code shared with you
+            <p className={`text-xs text-center font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-400'}`}>
+              Enter the 4-digit room code
             </p>
           </div>
 
           {/* Private Toggle */}
-          <label className="flex items-center space-x-4 cursor-pointer">
-            <input
-              type="checkbox"
-              name="isPrivate"
-              checked={formData.isPrivate}
-              onChange={handleChange}
-              className="sr-only peer"
-            />
-            <div className="w-16 h-8 bg-gray-300 border-4 border-black peer-checked:bg-yellow-400 transition-all relative">
-              <div className="absolute left-1 top-1 w-6 h-6 bg-black transition-all peer-checked:translate-x-8" />
-            </div>
-            <span className="text-xl font-black">Private Room 🔒</span>
-          </label>
+          <div className="space-y-4">
+            <label className={`flex items-center gap-4 cursor-pointer p-4 border transition-all ${theme === 'dark'
+              ? 'border-[#27272A] hover:bg-[#27272A]/50 rounded-2xl'
+              : 'border-2 border-black hover:bg-gray-50'
+              }`}>
+              <div className="relative">
+                <input
+                  type="checkbox"
+                  name="isPrivate"
+                  checked={formData.isPrivate}
+                  onChange={handleChange}
+                  className="sr-only peer"
+                />
+                <div className={`w-12 h-7 transition-colors ${theme === 'dark' ? 'bg-[#3F3F46] peer-checked:bg-[#EAB308] rounded-full' : 'bg-gray-300 border-2 border-black peer-checked:bg-green-400'
+                  }`}></div>
+                <div className={`absolute left-1 top-1 w-5 h-5 transition-transform peer-checked:translate-x-5 ${theme === 'dark' ? 'bg-white rounded-full' : 'bg-black border border-black'
+                  }`}></div>
+              </div>
+              <div>
+                <span className={`block text-base font-bold ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
+                  Private Room
+                </span>
+              </div>
+            </label>
+          </div>
 
           {formData.isPrivate && (
-            <div className="space-y-3 bg-yellow-300 border-4 border-black p-6 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-              <label className="block text-xl font-black uppercase">
+            <div className={`space-y-3 p-4 animate-fadeIn ${theme === 'dark' ? 'bg-[#27272A]/50 rounded-xl' : 'bg-yellow-300 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]'
+              }`}>
+              <label className={`block text-sm font-bold uppercase tracking-wider ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
@@ -173,50 +203,59 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Enter room password"
-                  className="w-full px-6 py-4 border-4 border-black font-bold"
+                  className={`w-full px-4 py-3 outline-none transition-all ${theme === 'dark'
+                    ? 'bg-[#09090B] border-2 border-[#27272A] focus:border-[#EAB308] text-white placeholder-gray-600 rounded-xl'
+                    : 'bg-white border-2 border-black focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-black placeholder-gray-400 font-bold'
+                    }`}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-2 bg-black text-white font-black border-2 border-black hover:bg-white hover:text-black transition-all"
+                  className={`absolute right-3 top-1/2 -translate-y-1/2 p-1.5 font-bold transition-all ${theme === 'dark'
+                    ? 'bg-[#27272A] text-gray-400 hover:text-white rounded-lg'
+                    : 'bg-black text-white hover:bg-white hover:text-black border border-black'
+                    }`}
                 >
-                  {showPassword ? "🙈" : "👁️"}
+                  {showPassword ? "HIDE" : "SHOW"}
                 </button>
               </div>
             </div>
           )}
 
-          <div className="flex space-x-4 pt-4">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 px-8 py-5 text-xl font-black bg-black text-white border-4 border-black hover:bg-white hover:text-black transition-all"
-            >
-              {loading ? "JOINING..." : "JOIN ROOM"}
-            </button>
+          <div className="flex gap-3 pt-2">
             <button
               type="button"
               onClick={onClose}
               disabled={loading}
-              className="px-8 py-5 text-xl font-black border-4 border-black hover:bg-black hover:text-white transition-all"
+              className={`flex-1 px-6 py-4 font-bold transition-all ${theme === 'dark'
+                ? 'bg-[#27272A] text-white hover:bg-[#3F3F46] rounded-full'
+                : 'bg-white border-2 border-black text-black hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                }`}
             >
-              CANCEL
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={loading}
+              className={`flex-[2] px-6 py-4 font-bold transition-all items-center justify-center gap-2 ${theme === 'dark'
+                ? 'bg-[#EAB308] text-black hover:bg-[#D97706] shadow-yellow-900/20 rounded-full shadow-lg transform active:scale-95'
+                : 'bg-black text-white border-2 border-black hover:bg-white hover:text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                }`}
+            >
+              {loading ? "Joining..." : "Join Room"}
             </button>
           </div>
 
-          <div className="text-center pt-4 space-y-2">
-            <p className="text-sm font-bold text-gray-600">
-              Don't have a room ID?
-            </p>
+          <div className="text-center pt-2">
             <button
               type="button"
               onClick={() => {
                 onClose();
                 onOpenCreate();
               }}
-              className="text-sm font-black underline decoration-4 decoration-yellow-300 hover:decoration-black"
+              className={`text-sm font-bold hover:underline ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-black decoration-2 decoration-yellow-400 hover:decoration-black'}`}
             >
-              CREATE YOUR OWN ROOM INSTEAD
+              Don't have a room? Create one
             </button>
           </div>
         </form>

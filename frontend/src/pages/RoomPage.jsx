@@ -6,6 +6,7 @@ import ChatWindow from '../components/room/ChatWindow';
 import MessageInput from '../components/room/MessageInput';
 import TypingIndicator from '../components/room/TypingIndicator';
 import ConfirmationModal from '../components/modals/ConfirmationModal';
+import { useTheme } from '../context/ThemeContext';
 import {
   saveMessagesToStorage,
   getMessagesFromStorage,
@@ -34,6 +35,7 @@ const RoomPage = () => {
   const [showKickedModal, setShowKickedModal] = useState(false);
   const [messagesLoadedFromStorage, setMessagesLoadedFromStorage] = useState(false);
   const [isAdminUser, setIsAdminUser] = useState(false);
+  const { theme } = useTheme();
 
   const currentUserRef = useRef(null);
 
@@ -197,24 +199,49 @@ const RoomPage = () => {
     setShowDeleteModal(false);
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div className="w-full h-screen flex items-center justify-center bg-yellow-300">
+      <div className="text-4xl font-black animate-bounce">LOADING...</div>
+    </div>
+  );
 
   return (
-    <div className="w-full h-[100dvh] bg-white flex flex-col overflow-hidden">
-      <RoomInfo
-        room={room}
-        isAdmin={isAdminUser}
-        currentUserId={currentUser.id}
-        onLeave={handleLeaveRoom}
-        onDelete={() => setShowDeleteModal(true)}
-      />
+    <div className={`w-full h-[100dvh] flex flex-col items-center justify-center p-0 lg:p-8 overflow-hidden relative transition-colors duration-500 ease-in-out ${theme === 'dark' ? 'bg-[#09090B]' : 'bg-gray-100'
+      }`}>
+      {/* Dot Pattern Background - Removed for cleaner look in dark mode */}
+      <div className={`absolute inset-0 opacity-10 ${theme === 'dark' ? 'hidden' : 'bg-[radial-gradient(#000_2px,transparent_2px)]'
+        }`} style={{ backgroundSize: '20px 20px' }}></div>
 
-      <div className="flex-1 flex overflow-hidden border-t-4 border-black">
-        <div className="flex-1 flex flex-col">
-          <ChatWindow messages={messages} currentUser={currentUser} roomCode={roomCode} />
-          <TypingIndicator typingUsers={typingUsers} />
-          <MessageInput onSend={handleSendMessage} onTyping={handleTyping} onStopTyping={handleStopTyping} />
+      {/* Main Card Container */}
+      <div className={`w-full h-full max-w-6xl border-x-0 border-y-0 lg:border-0 lg:rounded-2xl flex flex-col overflow-hidden relative z-10 transition-colors duration-500 ease-in-out ${theme === 'dark'
+        ? 'bg-[#18181B] shadow-2xl border-[#27272A] border'
+        : 'bg-white border-black lg:shadow-[16px_16px_0px_0px_rgba(0,0,0,1)] lg:border-4'
+        }`}>
+
+        {/* Header */}
+        <RoomInfo
+          room={room}
+          isAdmin={isAdminUser}
+          currentUserId={currentUser.id}
+          onLeave={handleLeaveRoom}
+          onDelete={() => setShowDeleteModal(true)}
+        />
+
+        {/* Chat Area */}
+        <div className={`flex-1 flex overflow-hidden relative ${theme === 'dark' ? 'bg-[#18181B]' : 'bg-white'
+          }`}>
+          <div className="flex-1 flex flex-col relative">
+            <ChatWindow messages={messages} currentUser={currentUser} roomCode={roomCode} />
+
+            {/* Typing Indicator Overlay */}
+            <div className="absolute bottom-0 left-0 w-full pointer-events-none p-4">
+              <TypingIndicator typingUsers={typingUsers} />
+            </div>
+          </div>
         </div>
+
+        {/* Input Area */}
+        <MessageInput onSend={handleSendMessage} onTyping={handleTyping} onStopTyping={handleStopTyping} />
       </div>
 
       {showDeleteModal && (
@@ -227,7 +254,6 @@ const RoomPage = () => {
         />
       )}
 
-      {/* Modal for kicked users */}
       {showKickedModal && (
         <ConfirmationModal
           isOpen={showKickedModal}

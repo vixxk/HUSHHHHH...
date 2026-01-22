@@ -1,27 +1,22 @@
 import React from 'react';
 
 const TypingIndicator = ({ typingUsers }) => {
-  if (typingUsers.length === 0) return null;
-
-  const getTypingText = () => {
-    if (typingUsers.length === 1) {
-      return `${typingUsers[0]} is typing`;
-    } else if (typingUsers.length === 2) {
-      return `${typingUsers[0]} and ${typingUsers[1]} are typing`;
-    } else {
-      return `${typingUsers.length} people are typing`;
-    }
-  };
+  if (!typingUsers || typingUsers.length === 0) return null;
 
   return (
-    <div className="px-4 py-2 bg-gray-50 border-t-2 border-black">
-      <div className="flex items-center space-x-2">
-        <div className="flex space-x-1">
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce"></div>
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-          <div className="w-2 h-2 bg-black rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+    <div className="inline-block animate-bounceIn">
+      <div className="bg-black text-white border-2 border-black border-b-4 px-3 py-1.5 shadow-lg flex items-center space-x-2 rounded-none transform -rotate-1">
+        <div className="flex space-x-1 items-center bg-white px-1 py-1 rounded-sm border border-black h-4">
+          <div className="w-1.5 h-1.5 bg-black animate-bounce delay-0"></div>
+          <div className="w-1.5 h-1.5 bg-black animate-bounce delay-100"></div>
+          <div className="w-1.5 h-1.5 bg-black animate-bounce delay-200"></div>
         </div>
-        <span className="text-sm font-bold text-gray-700">{getTypingText()}...</span>
+        <span className="font-black text-xs uppercase tracking-wider">
+          {typingUsers.length === 1
+            ? `${typingUsers[0]} IS TYPING...`
+            : `${typingUsers.length} PEOPLE TYPING...`
+          }
+        </span>
       </div>
     </div>
   );

@@ -1,5 +1,7 @@
 import React, { useState, useRef } from 'react';
 
+import { useTheme } from '../../context/ThemeContext';
+
 const FileUpload = ({ onUpload, onClose }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -7,7 +9,7 @@ const FileUpload = ({ onUpload, onClose }) => {
   const fileInputRef = useRef(null);
 
   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
-  const MAX_FILE_SIZE = 10 * 1024 * 1024; 
+  const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
   const validateFile = (file) => {
     if (file.size > MAX_FILE_SIZE) {
@@ -94,20 +96,12 @@ const FileUpload = ({ onUpload, onClose }) => {
     }
   };
 
-  return (
-    <div className="mt-4 bg-yellow-300 border-4 border-black p-6 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)]">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-xl font-black uppercase">📎 UPLOAD FILE</h3>
-        <button
-          onClick={onClose}
-          className="w-8 h-8 bg-black text-white font-black border-2 border-black hover:bg-white hover:text-black transition-all"
-        >
-          ✕
-        </button>
-      </div>
+  const { theme } = useTheme();
 
+  return (
+    <div className="w-full">
       {error && (
-        <div className="mb-4 bg-red-500 text-white border-4 border-black p-3 font-bold">
+        <div className={`mb-4 px-3 py-2 text-sm font-bold rounded-lg flex items-center gap-2 ${theme === 'dark' ? 'bg-red-500/10 text-red-500' : 'bg-red-50 text-red-600 border border-red-200'}`}>
           ⚠️ {error}
         </div>
       )}
@@ -118,9 +112,10 @@ const FileUpload = ({ onUpload, onClose }) => {
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        className={`border-4 border-dashed ${
-          dragActive ? 'border-black bg-white' : 'border-black bg-white'
-        } p-8 text-center transition-all cursor-pointer hover:bg-gray-50`}
+        className={`border-2 border-dashed rounded-xl p-6 lg:p-8 text-center transition-all cursor-pointer group ${dragActive
+          ? (theme === 'dark' ? 'border-[#EAB308] bg-[#27272A]' : 'border-blue-500 bg-blue-50')
+          : (theme === 'dark' ? 'border-[#3F3F46] hover:border-[#EAB308] hover:bg-[#27272A]' : 'border-gray-300 hover:border-black hover:bg-gray-50')
+          } ${theme === 'dark' ? 'bg-[#18181B]' : 'bg-white'}`}
         onClick={() => fileInputRef.current?.click()}
       >
         <input
@@ -132,19 +127,19 @@ const FileUpload = ({ onUpload, onClose }) => {
         />
 
         {uploading ? (
-          <div className="space-y-4">
-            <div className="w-16 h-16 border-8 border-black border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-lg font-black">UPLOADING...</p>
+          <div className="space-y-4 py-2">
+            <div className={`w-10 h-10 border-4 border-t-transparent rounded-full animate-spin mx-auto ${theme === 'dark' ? 'border-[#EAB308]' : 'border-black'}`}></div>
+            <p className={`text-sm font-bold ${theme === 'dark' ? 'text-gray-300' : 'text-black'}`}>UPLOADING...</p>
           </div>
         ) : (
-          <div className="space-y-4">
-            <div className="text-5xl">📤</div>
+          <div className="space-y-3 py-2">
+            <div className={`text-3xl lg:text-4xl transition-transform group-hover:scale-110 duration-200 ${theme === 'dark' ? 'grayscale brightness-150' : ''}`}>📤</div>
             <div>
-              <p className="text-lg font-black mb-2">
+              <p className={`text-sm lg:text-base font-bold mb-1 ${theme === 'dark' ? 'text-white' : 'text-black'}`}>
                 {dragActive ? 'DROP FILE HERE' : 'CLICK OR DRAG FILE'}
               </p>
-              <p className="text-sm font-bold text-gray-700">
-                Max 10MB • Images & Documents
+              <p className={`text-xs font-medium ${theme === 'dark' ? 'text-gray-500' : 'text-gray-500'}`}>
+                Max 10MB • Images & Docs
               </p>
             </div>
           </div>
