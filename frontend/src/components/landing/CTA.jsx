@@ -11,9 +11,9 @@ const CTA = ({ onCreateClick, onJoinClick }) => {
       </div>
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className={`p-8 lg:p-16 rounded-3xl ${theme === 'dark'
-          ? 'bg-[#18181B] border border-[#27272A]'
-          : 'bg-white border border-gray-100 shadow-xl'
+        <div className={`p-8 lg:p-16 transition-all duration-300 ${theme === 'dark'
+          ? 'bg-[#18181B] border border-[#27272A] rounded-3xl'
+          : 'bg-white border-4 border-black shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] rounded-none'
           }`}>
 
           {/* Main Content */}
@@ -35,18 +35,18 @@ const CTA = ({ onCreateClick, onJoinClick }) => {
             <div className="flex flex-col sm:flex-row gap-4 lg:gap-6 justify-center pt-6 lg:pt-8">
               <button
                 onClick={onCreateClick}
-                className={`px-6 lg:px-10 py-4 lg:py-5 text-lg font-bold rounded-full transition-all duration-200 transform hover:-translate-y-1 ${theme === 'dark'
-                  ? 'bg-[#EAB308] text-black hover:bg-[#CA8A04] shadow-lg shadow-yellow-900/20'
-                  : 'bg-black text-white hover:bg-gray-800 shadow-xl'
+                className={`px-6 lg:px-10 py-4 lg:py-5 text-lg font-bold transition-all duration-200 transform hover:-translate-y-1 ${theme === 'dark'
+                  ? 'bg-[#EAB308] text-black hover:bg-[#CA8A04] shadow-lg shadow-yellow-900/20 rounded-full'
+                  : 'bg-black text-white hover:bg-gray-800 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] rounded-none border-2 border-black'
                   }`}
               >
                 CREATE ROOM →
               </button>
               <button
                 onClick={onJoinClick}
-                className={`px-6 lg:px-10 py-4 lg:py-5 text-lg font-bold rounded-full transition-all duration-200 border-2 ${theme === 'dark'
-                  ? 'border-[#27272A] text-gray-300 hover:text-white hover:border-white hover:bg-[#27272A]'
-                  : 'border-gray-200 text-black hover:border-black'
+                className={`px-6 lg:px-10 py-4 lg:py-5 text-lg font-bold transition-all duration-200 ${theme === 'dark'
+                  ? 'border-2 border-[#27272A] text-gray-300 hover:text-white hover:border-white hover:bg-[#27272A] rounded-full'
+                  : 'border-4 border-black text-black hover:bg-black hover:text-white shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transform active:translate-x-[2px] active:translate-y-[2px] active:shadow-none rounded-none'
                   }`}
               >
                 JOIN ROOM
@@ -58,9 +58,9 @@ const CTA = ({ onCreateClick, onJoinClick }) => {
               {['NO REGISTRATION', '100% FREE', 'SECURE & PRIVATE'].map((feature, index) => (
                 <div
                   key={index}
-                  className={`flex items-center space-x-2 lg:space-x-3 px-4 lg:px-6 py-2 rounded-full font-medium text-xs lg:text-sm tracking-wide ${theme === 'dark'
-                    ? 'bg-[#27272A] text-gray-300'
-                    : 'bg-gray-100 text-gray-700'
+                  className={`flex items-center space-x-2 lg:space-x-3 px-4 lg:px-6 py-2 font-medium text-xs lg:text-sm tracking-wide ${theme === 'dark'
+                    ? 'bg-[#27272A] text-gray-300 rounded-full'
+                    : 'bg-white border-2 border-black text-black rounded-none shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
                     }`}
                 >
                   <span className={`text-lg lg:text-xl ${theme === 'dark' ? 'text-[#EAB308]' : 'text-green-500'}`}>✓</span>
