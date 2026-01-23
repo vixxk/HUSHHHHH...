@@ -174,29 +174,26 @@ const RoomPage = () => {
     navigate('/');
   };
 
-  const handleDeleteRoom = async () => {
-    try {
-      const response = await fetch(`${BACKEND_URL}/api/room/delete`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomCode: parseInt(roomCode), userId: currentUser.id })
-      });
+  const [isDeletedOptimistically, setIsDeletedOptimistically] = useState(false);
 
-      const data = await response.json();
-
-      if (response.ok) {
-        clearMessagesFromStorage(roomCode);
-        clearUserData(roomCode);
-        handleLeaveRoom();
-      } else {
-        console.error('Delete failed:', data.message);
-        setError(data.message || 'Failed to delete room');
-      }
-    } catch (err) {
-      console.error('Network error:', err);
-      setError('Network error. Please try again.');
-    }
+  const handleDeleteRoom = () => {
+    // Optimistic UI Update
     setShowDeleteModal(false);
+    setIsDeletedOptimistically(true);
+
+    // Fire and forget delete request
+    fetch(`${BACKEND_URL}/api/room/delete`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ roomCode: parseInt(roomCode), userId: currentUser.id })
+    }).catch(err => console.error('Delete failed:', err));
+
+    // Redirect after 5 seconds
+    setTimeout(() => {
+      clearMessagesFromStorage(roomCode);
+      clearUserData(roomCode);
+      handleLeaveRoom();
+    }, 5000);
   };
 
   if (loading) return (
@@ -204,6 +201,26 @@ const RoomPage = () => {
       <div className="text-4xl font-black animate-bounce">LOADING...</div>
     </div>
   );
+
+  if (isDeletedOptimistically) {
+    return (
+      <div className={`w-full h-[100dvh] flex flex-col items-center justify-center p-4 transition-colors duration-500 ${theme === 'dark' ? 'bg-[#09090B] text-white' : 'bg-gray-100 text-black'}`}>
+        <div className={`text-center p-8 rounded-3xl animate-fadeIn ${theme === 'dark'
+          ? 'bg-[#18181B] border border-[#27272A] shadow-2xl'
+          : 'bg-white border-4 border-black shadow-[16px_16px_0px_0px_rgba(0,0,0,1)]'
+          }`}>
+          <div className="text-6xl mb-6">🗑️</div>
+          <h2 className="text-3xl md:text-5xl font-black tracking-tighter mb-4">ROOM DELETED</h2>
+          <p className={`text-lg md:text-xl font-bold mb-8 ${theme === 'dark' ? 'text-gray-400' : 'text-gray-600'}`}>
+            Redirecting you home in 5 seconds...
+          </p>
+          <div className={`h-2 w-full rounded-full overflow-hidden ${theme === 'dark' ? 'bg-[#27272A]' : 'bg-gray-200'}`}>
+            <div className={`h-full animate-progress ${theme === 'dark' ? 'bg-red-500' : 'bg-black'}`}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`w-full h-[100dvh] flex flex-col items-center justify-center p-0 lg:p-8 overflow-hidden relative transition-colors duration-500 ease-in-out ${theme === 'dark' ? 'bg-[#09090B]' : 'bg-gray-100'

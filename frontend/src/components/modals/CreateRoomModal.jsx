@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { saveUserData } from "../../utils/userStorage";
+import { LuLoader } from "react-icons/lu";
 
 import { useTheme } from "../../context/ThemeContext";
 
@@ -198,8 +199,7 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
                 />
                 {generatingId && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className={`w-5 h-5 border-2 border-t-transparent rounded-full animate-spin ${theme === 'dark' ? 'border-[#EAB308]' : 'border-black'
-                      }`}></div>
+                    <LuLoader className={`w-5 h-5 animate-spin ${theme === 'dark' ? 'text-[#EAB308]' : 'text-black'}`} />
                   </div>
                 )}
               </div>
@@ -319,15 +319,15 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
               type="submit"
               disabled={loading || generatingId}
               className={`flex-[2] px-4 py-3 md:px-6 md:py-4 text-sm md:text-base font-bold transition-all items-center justify-center gap-2 ${theme === 'dark'
-                ? 'bg-[#EAB308] text-black hover:bg-[#D97706] shadow-yellow-900/20 rounded-full shadow-lg transform active:scale-95'
-                : 'bg-black text-white border-2 border-black hover:bg-white hover:text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+                ? 'bg-[#EAB308] text-black hover:bg-[#D97706] shadow-yellow-900/20 rounded-full shadow-lg transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed'
+                : 'bg-black text-white border-2 border-black hover:bg-white hover:text-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-50 disabled:cursor-not-allowed'
                 }`}
             >
               {loading ? (
-                <>
-                  <div className={`w-4 h-4 border-2 border-t-transparent rounded-full animate-spin ${theme === 'dark' ? 'border-black' : 'border-white'}`}></div>
-                  <span>Creating...</span>
-                </>
+                <div className="flex items-center justify-center gap-2">
+                  <LuLoader className={`w-5 h-5 animate-spin ${theme === 'dark' ? 'text-black' : 'text-white group-hover:text-black'}`} />
+                  <span>Creating Room...</span>
+                </div>
               ) : (
                 "Create Room"
               )}

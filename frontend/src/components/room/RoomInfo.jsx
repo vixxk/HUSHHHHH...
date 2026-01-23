@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { IoTrashOutline } from "react-icons/io5";
 import { useTheme } from '../../context/ThemeContext';
 import ThemeToggle from '../common/ThemeToggle';
 
@@ -69,10 +70,13 @@ const RoomInfo = ({ room, isAdmin, currentUserId, onLeave, onDelete }) => {
         {isAdmin && (
           <button
             onClick={onDelete}
-            className="group w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center bg-red-500 border-2 lg:border-4 border-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all"
+            className={`group w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center border-2 lg:border-4 transition-all ${theme === 'dark'
+              ? 'bg-red-500/10 border-red-500 text-red-500 hover:bg-red-500 hover:text-white rounded-xl'
+              : 'bg-red-500 border-black text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none'
+              }`}
             title="Delete Room"
           >
-            <span className="text-sm lg:text-xl group-hover:scale-125 transition-transform">🗑️</span>
+            <IoTrashOutline className="text-lg lg:text-2xl group-hover:scale-110 transition-transform" />
           </button>
         )}
 
