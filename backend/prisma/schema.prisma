@@ -7,13 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Room{
-  id          Int    @id @default(autoincrement())
-  admin       Int    
-  roomCode    Int    @unique
-  roomName    String
-  password    String?
-  isPrivate   Boolean
-  lastActivity DateTime
-  createdAt   DateTime  @default(now())
+model Room {
+  id             Int       @id @default(autoincrement())
+  roomCode       Int       @unique
+  roomName       String
+  password       String?
+  isPrivate      Boolean   @default(false)
+  adminTokenHash String
+  lastActivity   DateTime  @default(now())
+  createdAt      DateTime  @default(now())
 }

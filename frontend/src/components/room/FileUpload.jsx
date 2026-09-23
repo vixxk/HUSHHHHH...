@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 
 import { useTheme } from '../../context/ThemeContext';
 
-const FileUpload = ({ onUpload, onClose }) => {
+const FileUpload = ({ roomCode, onUpload, onClose }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [dragActive, setDragActive] = useState(false);
@@ -44,6 +44,9 @@ const FileUpload = ({ onUpload, onClose }) => {
 
     const formData = new FormData();
     formData.append('file', file);
+    if (roomCode) {
+      formData.append('roomCode', String(roomCode));
+    }
 
     try {
       console.log("Sending request to:", `${BACKEND_URL}/api/upload`); // Debug log

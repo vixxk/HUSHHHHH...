@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import FileUpload from './FileUpload';
 import { useTheme } from '../../context/ThemeContext';
 
-const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
+const MessageInput = ({ roomCode, onSend, onTyping, onStopTyping }) => {
   const [message, setMessage] = useState('');
   const [showFileUpload, setShowFileUpload] = useState(false);
   const typingTimeoutRef = useRef(null);
@@ -59,7 +59,7 @@ const MessageInput = ({ onSend, onTyping, onStopTyping }) => {
               <h3 className={`font-black text-lg lg:text-xl ${theme === 'dark' ? 'text-white' : 'text-black'}`}>UPLOAD FILE</h3>
               <button onClick={() => setShowFileUpload(false)} className={`text-xl font-bold ${theme === 'dark' ? 'text-gray-400 hover:text-white' : 'text-black hover:text-red-500'}`}>✕</button>
             </div>
-            <FileUpload onUpload={handleFileUpload} onClose={() => setShowFileUpload(false)} />
+            <FileUpload roomCode={roomCode} onUpload={handleFileUpload} onClose={() => setShowFileUpload(false)} />
           </div>
         </div>
       )}

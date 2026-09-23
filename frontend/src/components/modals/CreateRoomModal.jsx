@@ -18,13 +18,11 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
     roomId: "",
     isPrivate: false,
     password: "",
-    admin: Date.now(),
   });
 
   useEffect(() => {
     if (isOpen) {
       generateRoomId();
-      setFormData(prev => ({ ...prev, admin: Date.now() }));
     }
   }, [isOpen]);
 
@@ -105,24 +103,31 @@ const CreateRoomModal = ({ isOpen, onClose }) => {
       const data = await response.json();
 
       if (response.ok) {
+        const { newRoom, adminToken } = data;
+        const roomCode = newRoom.roomCode;
+
+        if (adminToken) {
+          sessionStorage.setItem(`hush_admin_${roomCode}`, adminToken);
+          localStorage.setItem(`hush_admin_${roomCode}`, adminToken);
+        }
+
         const adminUser = {
-          id: formData.admin,
+          id: Date.now(),
           name: `User${Math.floor(Math.random() * 1000)}`
         };
 
         localStorage.setItem(
           "currentRoom",
           JSON.stringify({
-            roomCode: formData.roomId,
-            roomName: formData.roomName,
+            roomCode: roomCode,
+            roomName: newRoom.roomName,
             isAdmin: true,
-            admin: formData.admin,
           })
         );
 
-        saveUserData(formData.roomId, adminUser);
+        saveUserData(roomCode, adminUser);
 
-        navigate(`/room/${formData.roomId}`);
+        navigate(`/room/${roomCode}`);
         onClose();
       } else {
         setError(data.message || "Failed to create room");

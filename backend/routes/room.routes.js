@@ -1,4 +1,4 @@
-import { roomCreation, generateRoomId, joinRoom, deleteRoom } from "../controllers/room.controllers.js";
+import { roomCreation, generateRoomId, joinRoom, deleteRoom, verifyAdmin } from "../controllers/room.controllers.js";
 import express from "express";
 
 const router = express.Router();
@@ -16,14 +16,10 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             required:
- *               - admin
  *               - roomId
  *               - roomName
  *               - isPrivate
  *             properties:
- *               admin:
- *                 type: integer
- *                 description: ID of the room creator
  *               roomId:
  *                 type: integer
  *                 description: Unique ID for the room
@@ -46,35 +42,10 @@ const router = express.Router();
  *               properties:
  *                 newRoom:
  *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     admin:
- *                       type: integer
- *                     roomCode:
- *                       type: integer
- *                     roomName:
- *                       type: string
- *                     password:
- *                       type: string
- *                       nullable: true
- *                     isPrivate:
- *                       type: boolean
- *                     lastActivity:
- *                       type: string
- *                       format: date-time
- *                     createdAt:
- *                       type: string
- *                       format: date-time
+ *                 adminToken:
+ *                   type: string
  *       400:
  *         description: Validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  */
 router.post("/create", roomCreation);
 
@@ -87,14 +58,6 @@ router.post("/create", roomCreation);
  *     responses:
  *       200:
  *         description: Successfully generated a new room ID
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 generatedId:
- *                   type: integer
- *                   description: Randomly generated unique room ID
  */
 router.get("/generateRoomId", generateRoomId);
 
@@ -112,73 +75,28 @@ router.get("/generateRoomId", generateRoomId);
  *             type: object
  *             required:
  *               - roomId
- *               - isPrivate
  *             properties:
  *               roomId:
  *                 type: integer
- *                 description: The ID of the room to join
  *               isPrivate:
  *                 type: boolean
- *                 description: Whether the room is private
  *               password:
  *                 type: string
- *                 description: Password for private rooms (required if isPrivate is true)
  *     responses:
  *       200:
  *         description: Successfully joined the room
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 room:
- *                   type: object
- *                   properties:
- *                     id:
- *                       type: integer
- *                     admin:
- *                       type: integer
- *                     roomCode:
- *                       type: integer
- *                     roomName:
- *                       type: string
- *                     password:
- *                       type: string
- *                       nullable: true
- *                     isPrivate:
- *                       type: boolean
- *                     lastActivity:
- *                       type: string
- *                       format: date-time
- *                     createdAt:
- *                       type: string
- *                       format: date-time
  *       400:
  *         description: Invalid credentials or password error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  *       404:
  *         description: Room not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
  */
 router.post("/join", joinRoom);
 
 /**
  * @swagger
- * /api/room/delete:
- *   delete:
- *     summary: Delete an existing room
+ * /api/room/verify-admin:
+ *   post:
+ *     summary: Verify if the client possesses the admin token for the room
  *     tags: [Rooms]
  *     requestBody:
  *       required: true
@@ -188,33 +106,57 @@ router.post("/join", joinRoom);
  *             type: object
  *             required:
  *               - roomCode
- *               - userId
+ *               - adminToken
  *             properties:
  *               roomCode:
  *                 type: integer
- *                 description: The room code of the room to delete
- *               userId:
+ *               adminToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Verification result
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 isAdmin:
+ *                   type: boolean
+ */
+router.post("/verify-admin", verifyAdmin);
+
+/**
+ * @swagger
+ * /api/room/delete:
+ *   delete:
+ *     summary: Delete an existing room
+ *     tags: [Rooms]
+ *     parameters:
+ *       - in: header
+ *         name: x-admin-token
+ *         schema:
+ *           type: string
+ *         description: Secret admin token obtained when creating the room
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - roomCode
+ *             properties:
+ *               roomCode:
  *                 type: integer
- *                 description: The ID of the admin requesting deletion
+ *               adminToken:
+ *                 type: string
  *     responses:
  *       200:
  *         description: Room deleted successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *       400:
- *         description: Only admin can delete room
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
+ *       403:
+ *         description: Invalid admin token
+ *       404:
+ *         description: Room not found
  */
 router.delete("/delete", deleteRoom);
 

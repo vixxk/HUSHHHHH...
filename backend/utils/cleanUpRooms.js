@@ -1,6 +1,7 @@
 import { prisma } from "../prisma.js";
+import cloudinary from "../cloudinary.config.js";
 
-export const cleanUpRooms = async () => {
+export const cleanUpRooms = async (io) => {
   try {
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
@@ -17,21 +18,32 @@ export const cleanUpRooms = async () => {
     }
 
     for (const room of inactiveRooms) {
+      const roomIdStr = String(room.roomCode);
+
+      if (io) {
+        io.to(roomIdStr).emit("roomDeleted", {
+          roomCode: room.roomCode,
+          message: "Room expired due to inactivity",
+        });
+      }
+
+      try {
+        await cloudinary.api.delete_resources_by_tag(`room_${room.roomCode}`);
+      } catch (cErr) {
+        // Tag might not exist or no images uploaded
+      }
+
       await prisma.room.delete({
         where: {
-          roomCode: room.roomCode, 
+          roomCode: room.roomCode,
         },
       });
 
-      console.log(`Deleted room: ${room.roomCode}`);
+      console.log(`Deleted inactive room: ${room.roomCode}`);
     }
-
   } catch (error) {
-    console.log("Room CleanUp Error: ", error);
-    throw error;
+    console.error("Room CleanUp Error: ", error);
   }
 };
-
-setInterval(cleanUpRooms, 5 * 60 * 1000);
 
 export default cleanUpRooms;

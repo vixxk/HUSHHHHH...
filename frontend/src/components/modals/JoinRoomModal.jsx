@@ -67,12 +67,35 @@ const JoinRoomModal = ({ isOpen, onClose, onOpenCreate }) => {
       const data = await response.json();
 
       if (response.ok) {
+        const roomCodeInt = parseInt(formData.roomId);
+        const storedAdminToken =
+          sessionStorage.getItem(`hush_admin_${roomCodeInt}`) ||
+          localStorage.getItem(`hush_admin_${roomCodeInt}`);
+
+        let isAdmin = false;
+        if (storedAdminToken) {
+          try {
+            const verifyRes = await fetch(`${BACKEND_URL}/api/room/verify-admin`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                roomCode: roomCodeInt,
+                adminToken: storedAdminToken,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            isAdmin = Boolean(verifyData.isAdmin);
+          } catch (e) {
+            console.error("Admin verification error:", e);
+          }
+        }
+
         localStorage.setItem(
           "currentRoom",
           JSON.stringify({
-            roomCode: parseInt(formData.roomId),
+            roomCode: roomCodeInt,
             roomName: data.room.roomName,
-            isAdmin: false,
+            isAdmin,
           })
         );
 

@@ -70,8 +70,28 @@ const RoomPage = () => {
 
         setRoom(roomInfo);
 
-        const adminId = parseInt(roomInfo.admin);
-        const isAdmin = parseInt(currentUser.id) === adminId;
+        // Verify admin status dynamically via cryptographic admin token
+        const storedAdminToken =
+          sessionStorage.getItem(`hush_admin_${roomCode}`) ||
+          localStorage.getItem(`hush_admin_${roomCode}`);
+
+        let isAdmin = false;
+        if (storedAdminToken) {
+          try {
+            const verifyRes = await fetch(`${BACKEND_URL}/api/room/verify-admin`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                roomCode: parseInt(roomCode),
+                adminToken: storedAdminToken,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            isAdmin = Boolean(verifyData.isAdmin);
+          } catch (e) {
+            console.error("Admin verification error:", e);
+          }
+        }
         setIsAdminUser(isAdmin);
 
         saveUserData(roomCode, currentUser);
@@ -84,7 +104,10 @@ const RoomPage = () => {
 
         socketRef.current = io(BACKEND_URL);
 
-        socketRef.current.emit('joinRoom', { roomCode: parseInt(roomCode) });
+        socketRef.current.emit('joinRoom', {
+          roomCode: parseInt(roomCode),
+          user: { id: currentUser.id, name: currentUser.name }
+        });
 
         setUsers([{
           id: currentUser.id,
@@ -105,6 +128,12 @@ const RoomPage = () => {
         });
 
         socketRef.current.on('userStopTyping', () => setTypingUsers([]));
+
+        socketRef.current.on('roomUsers', (userList) => {
+          if (Array.isArray(userList) && userList.length > 0) {
+            setUsers(userList);
+          }
+        });
 
         socketRef.current.on('userJoined', (userData) => {
           setUsers(prev => prev.some(u => u.id === userData.id) ? prev : [...prev, userData]);
@@ -171,6 +200,8 @@ const RoomPage = () => {
     localStorage.removeItem('currentRoom');
     clearMessagesFromStorage(roomCode);
     clearUserData(roomCode);
+    sessionStorage.removeItem(`hush_admin_${roomCode}`);
+    localStorage.removeItem(`hush_admin_${roomCode}`);
     navigate('/');
   };
 
@@ -181,17 +212,26 @@ const RoomPage = () => {
     setShowDeleteModal(false);
     setIsDeletedOptimistically(true);
 
-    // Fire and forget delete request
+    const adminToken =
+      sessionStorage.getItem(`hush_admin_${roomCode}`) ||
+      localStorage.getItem(`hush_admin_${roomCode}`);
+
+    // Delete request with admin token authentication
     fetch(`${BACKEND_URL}/api/room/delete`, {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ roomCode: parseInt(roomCode), userId: currentUser.id })
+      headers: {
+        'Content-Type': 'application/json',
+        'x-admin-token': adminToken || ''
+      },
+      body: JSON.stringify({ roomCode: parseInt(roomCode), adminToken })
     }).catch(err => console.error('Delete failed:', err));
 
     // Redirect after 5 seconds
     setTimeout(() => {
       clearMessagesFromStorage(roomCode);
       clearUserData(roomCode);
+      sessionStorage.removeItem(`hush_admin_${roomCode}`);
+      localStorage.removeItem(`hush_admin_${roomCode}`);
       handleLeaveRoom();
     }, 5000);
   };
@@ -258,7 +298,12 @@ const RoomPage = () => {
         </div>
 
         {/* Input Area */}
-        <MessageInput onSend={handleSendMessage} onTyping={handleTyping} onStopTyping={handleStopTyping} />
+        <MessageInput
+          roomCode={roomCode}
+          onSend={handleSendMessage}
+          onTyping={handleTyping}
+          onStopTyping={handleStopTyping}
+        />
       </div>
 
       {showDeleteModal && (
